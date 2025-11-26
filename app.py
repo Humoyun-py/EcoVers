@@ -160,6 +160,17 @@ class UserAchievement(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     earned_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    notification_type = db.Column(db.String(50), nullable=False)
+    is_read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user = db.relationship('User', backref='notifications')
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
@@ -653,38 +664,67 @@ def daily_quiz():
 @app.route('/ml_quiz')
 @login_required
 def ml_quiz():
-    flash("ML Quiz page not yet implemented.", "info")
-    return redirect(url_for('games'))
+    """ML Quiz o'yini"""
+    questions_data = load_questions_from_json()
+    questions = questions_data.get('eco_questions', [])
+    random.shuffle(questions)
+    questions = questions[:10]  # 10 ta savol
+    
+    return render_template('ml_quiz.html', 
+                         user=current_user,
+                         questions=questions)
 
 @app.route('/recycle_game')
 @login_required
 def recycle_game():
-    flash("Recycle game not yet implemented.", "info")
-    return redirect(url_for('games'))
+    """Qayta ishlash o'yini"""
+    return render_template('recycle_game.html', user=current_user)
 
 @app.route('/energy_game')
 @login_required
 def energy_game():
-    flash("Energy game not yet implemented.", "info")
-    return redirect(url_for('games'))
+    """Energiya tejash o'yini"""
+    return render_template('energy_game.html', user=current_user)
 
 @app.route('/suv_tejash')
 @login_required
 def suv_tejash():
-    flash("Suv Tejamkorlik game not yet implemented.", "info")
-    return redirect(url_for('games'))
+    """Suv tejash o'yini"""
+    return render_template('suv_tejash.html', user=current_user)
 
 @app.route('/virtual_daraxtekish')
 @login_required
 def virtual_daraxtekish():
-    flash("Virtual Daraxt Ekish game not yet implemented.", "info")
-    return redirect(url_for('games'))
+    """Virtual daraxt ekish o'yini"""
+    return render_template('virtual_daraxtekish.html', user=current_user)
 
 @app.route('/eco_puzzle')
 @login_required
 def eco_puzzle():
-    flash("Eco Puzzle not yet implemented.", "info")
-    return redirect(url_for('games'))
+    """Ekologik puzzle o'yini"""
+    return render_template('eco_puzzle.html', user=current_user)
+
+@app.route('/hero')
+@login_required
+def hero():
+    """Foydalanuvchining achievements va statistics sahifasi"""
+    total_tasks_completed = UserTask.query.filter_by(user_id=current_user.id, completed=True).count()
+    total_quizzes = QuizResult.query.filter_by(user_id=current_user.id).count()
+    total_coins_earned = db.session.query(func.sum(QuizResult.coins_earned)).filter_by(user_id=current_user.id).scalar() or 0
+    
+    hero_stats = {
+        'level': current_user.level,
+        'experience': current_user.experience,
+        'coins': current_user.coins,
+        'streak': current_user.streak,
+        'total_coins_earned': total_coins_earned,
+        'total_tasks_completed': total_tasks_completed,
+        'total_quizzes': total_quizzes
+    }
+    
+    return render_template('hero.html', 
+                         user=current_user, 
+                         hero_stats=hero_stats)
 
 @app.route('/admin/dashboard')
 @login_required
@@ -1000,6 +1040,125 @@ def add_announcement():
         return jsonify({'success': False, 'error': str(e)})
 
 # DO'KON ADMIN FUNKSIYALARI
+
+
+@app.route('/start_task_quiz/<int:task_id>')
+@login_required
+def start_task_quiz(task_id):
+    """Topshiriq uchun test boshlash"""
+    task = Task.query.get_or_404(task_id)
+    
+    # Energiya tekshirish
+    if current_user.energy < task.energy_cost:
+        flash(f'Energiya yetarli emas! Kerak: {task.energy_cost}, Sizda: {current_user.energy}', 'error')
+        return redirect(url_for('dashboard'))
+    
+    # Energiya kamaytirish
+    current_user.energy -= task.energy_cost
+    db.session.commit()
+    
+    # Test savollari yuklanish (demo savollari yoki JSON dan)
+    questions_data = load_questions_from_json()
+    questions = questions_data.get('eco_questions', [])
+    
+    # Task darajasiga qarab savol filtrlarini qilish
+    difficulty_map = {
+        'easy': 'easy',
+        'medium': 'medium',
+        'hard': 'hard'
+    }
+    
+    filtered_questions = [q for q in questions if q.get('difficulty') == difficulty_map.get(task.difficulty, 'easy')]
+    
+    # Agar filtrlanganlar kam bo'lsa, hammani olish
+    if len(filtered_questions) < 5:
+        filtered_questions = questions[:5]
+    else:
+        filtered_questions = random.sample(filtered_questions, min(5, len(filtered_questions)))
+    
+    return render_template('quiz.html',
+                         user=current_user,
+                         task=task,
+                         questions=filtered_questions,
+                         task_id=task_id)
+
+@app.route('/submit_quiz', methods=['POST'])
+@login_required
+def submit_quiz():
+    """Test natijalarini saqlash"""
+    try:
+        data = request.get_json()
+        results = data.get('results', [])
+        score = data.get('score', 0)
+        correct_count = data.get('correct_count', 0)
+        total_questions = data.get('total_questions', 0)
+        task_id = data.get('task_id')
+        
+        task = Task.query.get(task_id) if task_id else None
+        
+        # Darajaga qarab mukofotlarni hisoblash
+        base_coins = 20
+        if task:
+            if task.difficulty == 'easy':
+                coins_earned = base_coins + (correct_count * 2)
+                exp_gained = correct_count * 5
+            elif task.difficulty == 'medium':
+                coins_earned = base_coins + (correct_count * 3) + task.reward_coins
+                exp_gained = correct_count * 8
+            else:  # hard
+                coins_earned = base_coins + (correct_count * 5) + task.reward_coins
+                exp_gained = correct_count * 12
+        else:
+            coins_earned = base_coins + (correct_count * 3)
+            exp_gained = correct_count * 8
+        
+        # Mukofotlarni berish
+        current_user.coins += coins_earned
+        current_user.experience += exp_gained
+        
+        # Quiz resulti saqlash
+        quiz_result = QuizResult(
+            user_id=current_user.id,
+            score=score,
+            correct_answers=correct_count,
+            total_questions=total_questions,
+            coins_earned=coins_earned,
+            task_id=task_id
+        )
+        db.session.add(quiz_result)
+        
+        # Topshiriqni bajarilgan deb belgilash
+        if task_id:
+            user_task = UserTask.query.filter_by(user_id=current_user.id, task_id=task_id).first()
+            if user_task:
+                user_task.completed = True
+                user_task.completed_at = datetime.utcnow()
+        
+        # Kunlik progressni yangilash
+        today = datetime.utcnow().date()
+        daily_progress = DailyProgress.query.filter_by(user_id=current_user.id, date=today).first()
+        if daily_progress:
+            daily_progress.quizzes_completed += 1
+            daily_progress.coins_earned += coins_earned
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'score': score,
+            'correct_answers': correct_count,
+            'total_questions': total_questions,
+            'coins_earned': coins_earned,
+            'experience_gained': exp_gained,
+            'new_coins': current_user.coins,
+            'new_experience': current_user.experience,
+            'message': f'Test topshirildi! +{coins_earned} coin, +{exp_gained} tajriba'
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': f'Xatolik: {str(e)}'})
+
 @app.route('/admin/add_item', methods=['POST'])
 @login_required
 def add_item():
