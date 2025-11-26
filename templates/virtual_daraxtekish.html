@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Daraxt Ekish</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e0f7e9, #a8e6cf);
+            color: #2d6a4f;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #1b5e20;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #388e3c;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .tree-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .tree-container {
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            margin: 20px 0;
+        }
+        
+        .tree {
+            transition: all 0.5s ease;
+        }
+        
+        .seed { font-size: 3rem; color: #8d6e63; }
+        .sprout { font-size: 5rem; color: #7cb342; }
+        .young-tree { font-size: 7rem; color: #558b2f; }
+        .mature-tree { font-size: 10rem; color: #33691e; }
+        
+        .tree-info {
+            margin-top: 20px;
+        }
+        
+        .tree-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .tree-special {
+            font-style: italic;
+            color: #ef6c00;
+        }
+        
+        .progress-container {
+            margin: 15px 0;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #4caf50;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .stats-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1b5e20;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #388e3c;
+        }
+        
+        .actions-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background-color: #388e3c;
+            transform: translateY(-3px);
+        }
+        
+        .action-btn:disabled {
+            background-color: #a5d6a7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .missions-section {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .missions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .mission-card {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #4caf50;
+        }
+        
+        .mission-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .mission-reward {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .complete-btn {
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .landscape-section {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .landscape-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .landscape-tab {
+            padding: 10px 20px;
+            background-color: #c8e6c9;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .landscape-tab.active {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .landscape-view {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tree-on-landscape {
+            position: absolute;
+            bottom: 20px;
+            font-size: 3rem;
+            transition: all 0.5s ease;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tree-selection {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .tree-option {
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tree-option:hover {
+            background-color: #c8e6c9;
+        }
+        
+        .tree-option.selected {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .achievement {
+            background-color: #fff8e1;
+            border-left: 5px solid #ffd54f;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tree-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-seedling"></i> Virtual Daraxt Ekish</h1>
+            <p class="subtitle">Tabiatni qutqarish - kelajakni qurish!</p>
+        </header>
+        
+        <div class="game-area">
+            <div class="tree-section">
+                <h2>Mening Daraxtim</h2>
+                <div class="tree-container">
+                    <div class="tree seed" id="tree-display">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                </div>
+                <div class="tree-info">
+                    <div class="tree-name" id="tree-name">Urug'</div>
+                    <div class="tree-special" id="tree-special">Ekishni boshlang!</div>
+                </div>
+                <div class="progress-container">
+                    <div>O'sish darajasi:</div>
+                    <div class="progress-bar">
+                        <div class="progress" id="growth-progress"></div>
+                    </div>
+                    <div id="growth-text">0%</div>
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <h2>Mening Resurslarim</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="energy-value">100</div>
+                        <div class="stat-label"><i class="fas fa-bolt"></i> Energiya</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="water-value">100</div>
+                        <div class="stat-label"><i class="fas fa-tint"></i> Suv</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="eco-points">0</div>
+                        <div class="stat-label"><i class="fas fa-leaf"></i> Eco Ball</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="trees-planted">0</div>
+                        <div class="stat-label"><i class="fas fa-tree"></i> Ekilgan Daraxtlar</div>
+                    </div>
+                </div>
+                
+                <h2 style="margin-top: 20px;">Real Hayotdagi Harakatlar</h2>
+                <div class="action-buttons">
+                    <button class="action-btn" id="walk-btn">
+                        <i class="fas fa-walking"></i> 1 km Yurish
+                    </button>
+                    <button class="action-btn" id="recycle-btn">
+                        <i class="fas fa-recycle"></i> Chiqindilarni Saralash
+                    </button>
+                    <button class="action-btn" id="lights-btn">
+                        <i class="fas fa-lightbulb"></i> Chiroqni O'chirish
+                    </button>
+                </div>
+            </div>
+            
+            <div class="actions-section">
+                <h2>Daraxt Parvarishi</h2>
+                <div class="action-buttons">
+                    <button class="action-btn" id="water-btn">
+                        <i class="fas fa-tint"></i> Suv Berish
+                    </button>
+                    <button class="action-btn" id="sun-btn">
+                        <i class="fas fa-sun"></i> Quyosh Energiyasi
+                    </button>
+                    <button class="action-btn" id="fertilize-btn">
+                        <i class="fas fa-seedling"></i> O'g'itlash
+                    </button>
+                </div>
+                
+                <h2 style="margin-top: 20px;">Yangi Daraxt Ekish</h2>
+                <button class="action-btn" id="plant-tree-btn">
+                    <i class="fas fa-tree"></i> Yangi Daraxt Ekish
+                </button>
+                
+                <div class="achievement" id="achievement-message" style="display: none;">
+                    <i class="fas fa-trophy"></i> <span id="achievement-text">Yutuq ochildi!</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="missions-section">
+            <h2><i class="fas fa-tasks"></i> Kunlik Missiyalar</h2>
+            <div class="missions-grid">
+                <div class="mission-card">
+                    <div class="mission-title">Tabiat haqida 5 daqiqa o'qing</div>
+                    <p>Ekologiya haqida maqula yoki videoni ko'ring</p>
+                    <div class="mission-reward">
+                        <span>Mukofot: +10 Energiya</span>
+                        <button class="complete-btn" data-reward="energy" data-amount="10">Bajarildi</button>
+                    </div>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-title">Chiqindilarni saralang</div>
+                    <p>Plastik, shisha va qog'oz chiqindilarni ajrating</p>
+                    <div class="mission-reward">
+                        <span>Mukofot: +5 Eco Ball</span>
+                        <button class="complete-btn" data-reward="eco" data-amount="5">Bajarildi</button>
+                    </div>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-title">Daraxt ekish haqida video ko'ring</div>
+                    <p>Archa ekish bo'yicha qisqa videoni tomosha qiling</p>
+                    <div class="mission-reward">
+                        <span>Mukofot: +15 Suv</span>
+                        <button class="complete-btn" data-reward="water" data-amount="15">Bajarildi</button>
+                    </div>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-title">1 km piyoda yuring</div>
+                    <p>Mashina o'rniga piyoda yuring yoki yuguring</p>
+                    <div class="mission-reward">
+                        <span>Mukofot: +10 Energiya</span>
+                        <button class="complete-btn" data-reward="energy" data-amount="10">Bajarildi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="landscape-section">
+            <h2><i class="fas fa-mountain"></i> Mening Landshaftim</h2>
+            <div class="landscape-tabs">
+                <button class="landscape-tab active" data-landscape="forest">O'rmon</button>
+                <button class="landscape-tab" data-landscape="river">Daryo Bo'yi</button>
+                <button class="landscape-tab" data-landscape="mountain">Tog'</button>
+                <button class="landscape-tab" data-landscape="park">Shahar Parki</button>
+            </div>
+            <div class="landscape-view" id="landscape-view" style="background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80');">
+                <!-- Daraxtlar landshaftga qo'shiladi -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Daraxt tanlash modali -->
+    <div class="modal" id="tree-selection-modal">
+        <div class="modal-content">
+            <h2>Yangi Daraxt Tanlang</h2>
+            <p>Qaysi daraxt turini ekmoqchisiz?</p>
+            <div class="tree-selection">
+                <div class="tree-option" data-tree="tut">
+                    <i class="fas fa-tree" style="color: #4caf50;"></i>
+                    <div>Tut</div>
+                    <small>Ko'p kislorod beradi</small>
+                </div>
+                <div class="tree-option" data-tree="qayragoch">
+                    <i class="fas fa-tree" style="color: #8d6e63;"></i>
+                    <div>Qayrag'och</div>
+                    <small>Changni ushlaydi</small>
+                </div>
+                <div class="tree-option" data-tree="chinor">
+                    <i class="fas fa-tree" style="color: #33691e;"></i>
+                    <div>Chinor</div>
+                    <small>Issiqqa chidamli</small>
+                </div>
+                <div class="tree-option" data-tree="archa">
+                    <i class="fas fa-tree" style="color: #2e7d32;"></i>
+                    <div>Archa</div>
+                    <small>Havoni tozalaydi</small>
+                </div>
+            </div>
+            <button class="action-btn" id="confirm-tree-btn" style="margin-top: 20px;">Daraxtni Ekish</button>
+        </div>
+    </div>
+
+    <script>
+        // O'yin holati
+        const gameState = {
+            currentTree: null,
+            growthStage: 0, // 0: urug', 1: nihol, 2: yosh daraxt, 3: katta daraxt
+            growthProgress: 0,
+            energy: 100,
+            water: 100,
+            ecoPoints: 0,
+            treesPlanted: 0,
+            achievements: []
+        };
+
+        // Daraxt turlari
+        const treeTypes = {
+            tut: {
+                name: "Tut",
+                special: "Ko'p kislorod beradi",
+                icon: "🌳"
+            },
+            qayragoch: {
+                name: "Qayrag'och",
+                special: "Changni ushlaydi",
+                icon: "🌲"
+            },
+            chinor: {
+                name: "Chinor",
+                special: "Issiqqa chidamli",
+                icon: "🌴"
+            },
+            archa: {
+                name: "Archa",
+                special: "Havoni tozalaydi",
+                icon: "🎄"
+            }
+        };
+
+        // DOM elementlari
+        const treeDisplay = document.getElementById('tree-display');
+        const treeName = document.getElementById('tree-name');
+        const treeSpecial = document.getElementById('tree-special');
+        const growthProgress = document.getElementById('growth-progress');
+        const growthText = document.getElementById('growth-text');
+        const energyValue = document.getElementById('energy-value');
+        const waterValue = document.getElementById('water-value');
+        const ecoPointsValue = document.getElementById('eco-points');
+        const treesPlantedValue = document.getElementById('trees-planted');
+        const achievementMessage = document.getElementById('achievement-message');
+        const achievementText = document.getElementById('achievement-text');
+
+        // Daraxt tanlash modali
+        const treeSelectionModal = document.getElementById('tree-selection-modal');
+        const treeOptions = document.querySelectorAll('.tree-option');
+        const confirmTreeBtn = document.getElementById('confirm-tree-btn');
+        let selectedTreeType = null;
+
+        // Landshaft elementlari
+        const landscapeTabs = document.querySelectorAll('.landscape-tab');
+        const landscapeView = document.getElementById('landscape-view');
+
+        // Harakatlar tugmalari
+        document.getElementById('water-btn').addEventListener('click', waterTree);
+        document.getElementById('sun-btn').addEventListener('click', giveSunlight);
+        document.getElementById('fertilize-btn').addEventListener('click', fertilizeTree);
+        document.getElementById('plant-tree-btn').addEventListener('click', openTreeSelection);
+        document.getElementById('walk-btn').addEventListener('click', () => addResource('energy', 10));
+        document.getElementById('recycle-btn').addEventListener('click', () => addResource('eco', 5));
+        document.getElementById('lights-btn').addEventListener('click', () => addResource('water', 10));
+
+        // Missiyalar tugmalari
+        document.querySelectorAll('.complete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const rewardType = this.getAttribute('data-reward');
+                const rewardAmount = parseInt(this.getAttribute('data-amount'));
+                addResource(rewardType, rewardAmount);
+                this.textContent = "Bajarildi!";
+                this.disabled = true;
+            });
+        });
+
+        // Daraxt tanlash
+        treeOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                treeOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedTreeType = this.getAttribute('data-tree');
+            });
+        });
+
+        confirmTreeBtn.addEventListener('click', plantTree);
+
+        // Landshaft o'zgartirish
+        landscapeTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                landscapeTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const landscape = this.getAttribute('data-landscape');
+                changeLandscape(landscape);
+            });
+        });
+
+        // Daraxtni sug'orish
+        function waterTree() {
+            if (gameState.water >= 10 && gameState.currentTree) {
+                gameState.water -= 10;
+                gameState.growthProgress += 15;
+                updateUI();
+                checkGrowth();
+                showAchievement("Daraxtingizga suv berdingiz!");
+            }
+        }
+
+        // Quyosh energiyasi berish
+        function giveSunlight() {
+            if (gameState.energy >= 10 && gameState.currentTree) {
+                gameState.energy -= 10;
+                gameState.growthProgress += 10;
+                updateUI();
+                checkGrowth();
+                showAchievement("Daraxtingiz quyosh energiyasi oldi!");
+            }
+        }
+
+        // O'g'itlash
+        function fertilizeTree() {
+            if (gameState.ecoPoints >= 5 && gameState.currentTree) {
+                gameState.ecoPoints -= 5;
+                gameState.growthProgress += 20;
+                updateUI();
+                checkGrowth();
+                showAchievement("Daraxtingiz o'g'itlandi!");
+            }
+        }
+
+        // Resurs qo'shish
+        function addResource(type, amount) {
+            if (type === 'energy') {
+                gameState.energy += amount;
+            } else if (type === 'water') {
+                gameState.water += amount;
+            } else if (type === 'eco') {
+                gameState.ecoPoints += amount;
+            }
+            updateUI();
+            showAchievement(`Siz ${amount} ${type} qo'shdingiz!`);
+        }
+
+        // Daraxt ekish
+        function openTreeSelection() {
+            treeSelectionModal.style.display = 'flex';
+        }
+
+        function plantTree() {
+            if (selectedTreeType) {
+                gameState.currentTree = selectedTreeType;
+                gameState.growthStage = 0;
+                gameState.growthProgress = 0;
+                gameState.treesPlanted++;
+                
+                treeSelectionModal.style.display = 'none';
+                updateUI();
+                addTreeToLandscape();
+                showAchievement(`Yangi ${treeTypes[selectedTreeType].name} daraxti ekildi!`);
+            }
+        }
+
+        // O'sishni tekshirish
+        function checkGrowth() {
+            if (gameState.growthProgress >= 100 && gameState.growthStage < 3) {
+                gameState.growthStage++;
+                gameState.growthProgress = 0;
+                
+                if (gameState.growthStage === 3) {
+                    showAchievement("Daraxtingiz to'liq o'sdi! Yangi daraxt ekishingiz mumkin.");
+                }
+            }
+            updateTreeDisplay();
+        }
+
+        // Daraxtni ekranga chiqarish
+        function updateTreeDisplay() {
+            if (!gameState.currentTree) {
+                treeDisplay.className = 'tree seed';
+                treeDisplay.innerHTML = '<i class="fas fa-seedling"></i>';
+                treeName.textContent = "Urug'";
+                treeSpecial.textContent = "Ekishni boshlang!";
+                return;
+            }
+            
+            const tree = treeTypes[gameState.currentTree];
+            
+            if (gameState.growthStage === 0) {
+                treeDisplay.className = 'tree seed';
+                treeDisplay.innerHTML = '<i class="fas fa-seedling"></i>';
+                treeName.textContent = `${tree.name} urug'i`;
+            } else if (gameState.growthStage === 1) {
+                treeDisplay.className = 'tree sprout';
+                treeDisplay.innerHTML = '<i class="fas fa-leaf"></i>';
+                treeName.textContent = `${tree.name} niholi`;
+            } else if (gameState.growthStage === 2) {
+                treeDisplay.className = 'tree young-tree';
+                treeDisplay.innerHTML = tree.icon;
+                treeName.textContent = `Yosh ${tree.name}`;
+            } else if (gameState.growthStage === 3) {
+                treeDisplay.className = 'tree mature-tree';
+                treeDisplay.innerHTML = tree.icon;
+                treeName.textContent = `Katta ${tree.name}`;
+            }
+            
+            treeSpecial.textContent = tree.special;
+        }
+
+        // UI yangilash
+        function updateUI() {
+            energyValue.textContent = gameState.energy;
+            waterValue.textContent = gameState.water;
+            ecoPointsValue.textContent = gameState.ecoPoints;
+            treesPlantedValue.textContent = gameState.treesPlanted;
+            
+            growthProgress.style.width = `${gameState.growthProgress}%`;
+            growthText.textContent = `${gameState.growthProgress}%`;
+            
+            updateTreeDisplay();
+        }
+
+        // Landshaftni o'zgartirish
+        function changeLandscape(landscape) {
+            let backgroundImage = '';
+            
+            if (landscape === 'forest') {
+                backgroundImage = 'https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80';
+            } else if (landscape === 'river') {
+                backgroundImage = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80';
+            } else if (landscape === 'mountain') {
+                backgroundImage = 'https://images.unsplash.com/photo-1464822759849-e41f06bc6fca?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80';
+            } else if (landscape === 'park') {
+                backgroundImage = 'https://images.unsplash.com/photo-1518391846015-55a9cc003b25?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80';
+            }
+            
+            landscapeView.style.backgroundImage = `url('${backgroundImage}')`;
+        }
+
+        // Landshaftga daraxt qo'shish
+        function addTreeToLandscape() {
+            if (!gameState.currentTree) return;
+            
+            const treeOnLandscape = document.createElement('div');
+            treeOnLandscape.className = 'tree-on-landscape';
+            treeOnLandscape.textContent = treeTypes[gameState.currentTree].icon;
+            
+            // Tasodifiy joylashtirish
+            const leftPosition = Math.random() * 80 + 10;
+            treeOnLandscape.style.left = `${leftPosition}%`;
+            
+            landscapeView.appendChild(treeOnLandscape);
+        }
+
+        // Yutuq ko'rsatish
+        function showAchievement(text) {
+            achievementText.textContent = text;
+            achievementMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                achievementMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // Dastlabki UI yangilash
+        updateUI();
+    </script>
+</body>
+</html>

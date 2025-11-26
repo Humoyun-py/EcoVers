@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoVerse - Kattalar Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/eco-style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #1B5E20, #2E7D32);">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ url_for('admin_dashboard') }}">
+                <i class="fas fa-arrow-left me-2"></i>EcoVerse Admin
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="btn btn-outline-light btn-sm" href="{{ url_for('admin_logout') }}">
+                    <i class="fas fa-sign-out-alt me-1"></i>Chiqish
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="fw-bold mb-4">👩‍🦰 Kattalar Bo'limi Boshqaruvi</h2>
+
+                <!-- Foydalanuvchi coin boshqaruvi -->
+                <div class="eco-card mb-4">
+                    <div class="card-header">
+                        <h5 class="fw-bold mb-0">💰 Foydalanuvchi Coin Boshqaruvi</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Joriy Coin</th>
+                                        <th>Yangi Coin</th>
+                                        <th>Energiya</th>
+                                        <th>Streak</th>
+                                        <th>Amallar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in adult_users %}
+                                    <tr>
+                                        <td><strong>{{ user.username }}</strong></td>
+                                        <td>{{ user.email }}</td>
+                                        <td>{{ user.coins }}</td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm coins-input" 
+                                                   value="{{ user.coins }}" data-user-id="{{ user.id }}" 
+                                                   style="width: 100px;">
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm energy-input" 
+                                                   value="{{ user.energy }}" data-user-id="{{ user.id }}"
+                                                   style="width: 100px;">
+                                        </td>
+                                        <td>{{ user.streak }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-success update-user" data-user-id="{{ user.id }}">
+                                                <i class="fas fa-save"></i> Yangilash
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Post boshqaruvi -->
+                <div class="eco-card">
+                    <div class="card-header">
+                        <h5 class="fw-bold mb-0">📝 Postlar Boshqaruvi</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for post in posts %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title">{{ post.title }}</h6>
+                                    <span class="badge bg-info">{{ post.category }}</span>
+                                </div>
+                                <p class="card-text">{{ post.content[:150] }}{% if post.content|length > 150 %}...{% endif %}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <small class="text-muted">
+                                            <i class="fas fa-user me-1"></i>{{ post.author.username }}
+                                        </small>
+                                        <small class="text-muted ms-3">
+                                            <i class="fas fa-clock me-1"></i>{{ post.date.strftime('%Y-%m-%d %H:%M') }}
+                                        </small>
+                                        <small class="text-muted ms-3">
+                                            <i class="fas fa-heart me-1"></i>{{ post.likes_count }}
+                                        </small>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <select class="form-select form-select-sm me-2 post-status" data-post-id="{{ post.id }}" style="width: 120px;">
+                                            <option value="active" {% if post.status == 'active' %}selected{% endif %}>Aktiv</option>
+                                            <option value="archived" {% if post.status == 'archived' %}selected{% endif %}>Arxiv</option>
+                                            <option value="blocked" {% if post.status == 'blocked' %}selected{% endif %}>Bloklangan</option>
+                                        </select>
+                                        <button class="btn btn-sm btn-danger delete-post" data-post-id="{{ post.id }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Coin va energiyani yangilash
+        document.querySelectorAll('.update-user').forEach(button => {
+            button.addEventListener('click', function() {
+                const userId = this.dataset.userId;
+                const coinsInput = document.querySelector(`.coins-input[data-user-id="${userId}"]`);
+                const energyInput = document.querySelector(`.energy-input[data-user-id="${userId}"]`);
+                
+                const coins = parseInt(coinsInput.value);
+                const energy = parseInt(energyInput.value);
+                
+                // Coins yangilash
+                fetch(`/admin/update_user_coins/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ coins: coins })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Energiya yangilash
+                        fetch(`/admin/update_user_energy/${userId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ energy: energy })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Foydalanuvchi ma\'lumotlari yangilandi!');
+                                location.reload();
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        // Post statusini yangilash
+        document.querySelectorAll('.post-status').forEach(select => {
+            select.addEventListener('change', function() {
+                const postId = this.dataset.postId;
+                const status = this.value;
+                
+                fetch(`/admin/update_post_status/${postId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: status })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Post statusi yangilandi!');
+                    location.reload();
+                    }
+                });
+            });
+        });
+
+        // Post o'chirish
+        document.querySelectorAll('.delete-post').forEach(button => {
+            button.addEventListener('click', function() {
+                const postId = this.dataset.postId;
+                if (confirm('Haqiqatan ham bu postni o\'chirmoqchimisiz?')) {
+                    fetch(`/admin/delete_post/${postId}`, {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            alert(result.message);
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html

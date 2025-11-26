@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chiqindilarni Saralash Mini-O'yini</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e0f7e9, #a8e6cf);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 900px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .game-header {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .game-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .game-stats {
+            display: flex;
+            gap: 15px;
+        }
+
+        .stat {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .game-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .timer-container {
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .timer-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #4CAF50, #FFC107, #F44336);
+            border-radius: 10px;
+            transition: width 1s linear;
+        }
+
+        .trash-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            min-height: 150px;
+        }
+
+        .current-trash {
+            width: 100px;
+            height: 100px;
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            cursor: grab;
+            transition: transform 0.2s;
+            position: relative;
+            padding: 5px;
+        }
+
+        .current-trash:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+        }
+
+        .trash-icon {
+            font-size: 40px;
+        }
+
+        .trash-name {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .bins-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .bin {
+            height: 120px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .bin:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .bin-icon {
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+
+        .plastic-bin {
+            background: linear-gradient(135deg, #2196F3, #0D47A1);
+        }
+
+        .glass-bin {
+            background: linear-gradient(135deg, #4CAF50, #1B5E20);
+        }
+
+        .organic-bin {
+            background: linear-gradient(135deg, #795548, #3E2723);
+        }
+
+        .metal-bin {
+            background: linear-gradient(135deg, #9E9E9E, #212121);
+        }
+
+        .feedback {
+            text-align: center;
+            min-height: 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .correct {
+            color: #4CAF50;
+        }
+
+        .incorrect {
+            color: #F44336;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 10;
+            display: none;
+        }
+
+        .result-container {
+            background-color: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        .result-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .bonus {
+            color: #FFC107;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .badge {
+            background-color: #FFC107;
+            color: #333;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .difficulty-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .difficulty-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .difficulty-btn.active {
+            transform: scale(1.05);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .easy {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .medium {
+            background-color: #FFC107;
+            color: #333;
+        }
+
+        .hard {
+            background-color: #F44336;
+            color: white;
+        }
+
+        .instructions {
+            background-color: #E8F5E9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .bins-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .game-stats {
+                width: 100%;
+                justify-content: space-around;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="game-title">♻️ Chiqindilarni Saralash</div>
+            <div class="game-stats">
+                <div class="stat">
+                    <span>💰</span>
+                    <span id="coins">0</span>
+                </div>
+                <div class="stat">
+                    <span>⚡</span>
+                    <span id="energy">100</span>
+                </div>
+                <div class="stat">
+                    <span>⭐</span>
+                    <span id="level">1</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-content">
+            <div class="instructions">
+                O'yin qoidasi: Chiqindilarni to'g'ri qutiga tashlang. To'g'ri tashlasangiz, coin va tajriba olasiz. Xato tashlasangiz, energiya yo'qotasiz.
+            </div>
+            
+            <div class="difficulty-selector">
+                <button class="difficulty-btn easy active" data-level="1">Oson</button>
+                <button class="difficulty-btn medium" data-level="2">O'rta</button>
+                <button class="difficulty-btn hard" data-level="3">Qiyin</button>
+            </div>
+            
+            <div class="timer-container">
+                <div class="timer-bar" id="timer-bar"></div>
+            </div>
+            
+            <div class="trash-container">
+                <div class="current-trash" id="current-trash" draggable="true">
+                    <div class="trash-icon" id="trash-icon">🗑️</div>
+                    <div class="trash-name" id="trash-name">Chiqindi</div>
+                </div>
+            </div>
+            
+            <div class="bins-container">
+                <div class="bin plastic-bin" data-type="plastic">
+                    <div class="bin-icon">🟦</div>
+                    <div>Plastik</div>
+                </div>
+                <div class="bin glass-bin" data-type="glass">
+                    <div class="bin-icon">🟩</div>
+                    <div>Shisha</div>
+                </div>
+                <div class="bin organic-bin" data-type="organic">
+                    <div class="bin-icon">🟫</div>
+                    <div>Organik</div>
+                </div>
+                <div class="bin metal-bin" data-type="metal">
+                    <div class="bin-icon">⬜</div>
+                    <div>Metall</div>
+                </div>
+            </div>
+            
+            <div class="feedback" id="feedback"></div>
+        </div>
+        
+        <div class="game-over" id="game-over">
+            <div class="result-container">
+                <div class="result-title">O'yin Tugadi!</div>
+                <div class="result-stats">
+                    <div class="stat-row">
+                        <span>Saralangan chiqindilar:</span>
+                        <span id="result-trash">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>To'g'ri saralash:</span>
+                        <span id="result-accuracy">0%</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Topilgan coin:</span>
+                        <span id="result-coins">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Qolgan energiya:</span>
+                        <span id="result-energy">0</span>
+                    </div>
+                </div>
+                <div id="bonus-message" class="bonus"></div>
+                <div id="badge-message" class="badge"></div>
+                <button class="restart-btn" id="restart-btn">Qayta Boshlash</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // O'yin o'zgaruvchilari
+        let coins = 0;
+        let energy = 100;
+        let level = 1;
+        let xp = 0;
+        let correctAnswers = 0;
+        let totalAnswers = 0;
+        let gameTime = 30;
+        let timeLeft = gameTime;
+        let timerInterval;
+        let currentDifficulty = 1;
+        let gameActive = false;
+        
+        // Chiqindilar ma'lumotlari - 100 ta chiqindi
+        const trashItems = [
+            // Plastik chiqindilar (25 ta)
+            { name: "Plastik shisha", type: "plastic", icon: "🧴" },
+            { name: "Plastik sumka", type: "plastic", icon: "🛍️" },
+            { name: "Plastik idish", type: "plastic", icon: "🍱" },
+            { name: "Plastik shisha qopqog'i", type: "plastic", icon: "🔘" },
+            { name: "Plastik o'yinchoq", type: "plastic", icon: "🧸" },
+            { name: "Plastik qalam", type: "plastic", icon: "🖊️" },
+            { name: "Plastik shampun idishi", type: "plastic", icon: "🧴" },
+            { name: "Plastik stakan", type: "plastic", icon: "🥤" },
+            { name: "Plastik pichoq", type: "plastic", icon: "🔪" },
+            { name: "Plastik qoshiq", type: "plastic", icon: "🥄" },
+            { name: "Plastik tarelka", type: "plastic", icon: "🍽️" },
+            { name: "Plastik chelak", type: "plastic", icon: "🪣" },
+            { name: "Plastik shlang", type: "plastic", icon: "🕳️" },
+            { name: "Plastik quti", type: "plastic", icon: "📦" },
+            { name: "Plastik shisha", type: "plastic", icon: "💧" },
+            { name: "Plastik naycha", type: "plastic", icon: "🧪" },
+            { name: "Plastik ramka", type: "plastic", icon: "🖼️" },
+            { name: "Plastik shlyapa", type: "plastic", icon: "🧢" },
+            { name: "Plastik kaska", type: "plastic", icon: "⛑️" },
+            { name: "Plastik shkaf", type: "plastic", icon: "🗄️" },
+            { name: "Plastik stul", type: "plastic", icon: "🪑" },
+            { name: "Plastik stol", type: "plastic", icon: "🛋️" },
+            { name: "Plastik chiroq", type: "plastic", icon: "💡" },
+            { name: "Plastik telefon", type: "plastic", icon: "📱" },
+            { name: "Plastik kompyuter", type: "plastic", icon: "💻" },
+            
+            // Shisha chiqindilar (25 ta)
+            { name: "Shisha idish", type: "glass", icon: "🍶" },
+            { name: "Shisha butilka", type: "glass", icon: "🍾" },
+            { name: "Shisha stakan", type: "glass", icon: "🥛" },
+            { name: "Shisha banka", type: "glass", icon: "🫙" },
+            { name: "Shisha vaza", type: "glass", icon: "🏺" },
+            { name: "Shisha shisha", type: "glass", icon: "🔮" },
+            { name: "Shisha linza", type: "glass", icon: "👓" },
+            { name: "Shisha oyna", type: "glass", icon: "🪞" },
+            { name: "Shisha lampa", type: "glass", icon: "💡" },
+            { name: "Shisha shisha", type: "glass", icon: "🧊" },
+            { name: "Shisha idish", type: "glass", icon: "🍵" },
+            { name: "Shisha qadah", type: "glass", icon: "🍷" },
+            { name: "Shisha shisha", type: "glass", icon: "🥃" },
+            { name: "Shisha idish", type: "glass", icon: "🍶" },
+            { name: "Shisha butilka", type: "glass", icon: "🍼" },
+            { name: "Shisha shisha", type: "glass", icon: "🧪" },
+            { name: "Shisha idish", type: "glass", icon: "🔬" },
+            { name: "Shisha oyna", type: "glass", icon: "🚗" },
+            { name: "Shisha linza", type: "glass", icon: "📷" },
+            { name: "Shisha idish", type: "glass", icon: "⏰" },
+            { name: "Shisha shisha", type: "glass", icon: "🌡️" },
+            { name: "Shisha idish", type: "glass", icon: "💊" },
+            { name: "Shisha butilka", type: "glass", icon: "🧴" },
+            { name: "Shisha stakan", type: "glass", icon: "🍸" },
+            { name: "Shisha idish", type: "glass", icon: "🍶" },
+            
+            // Organik chiqindilar (25 ta)
+            { name: "Banan po'sti", type: "organic", icon: "🍌" },
+            { name: "Qog'oz stakan", type: "organic", icon: "🥤" },
+            { name: "Tuxum qobig'i", type: "organic", icon: "🥚" },
+            { name: "Olma po'sti", type: "organic", icon: "🍎" },
+            { name: "Nok po'sti", type: "organic", icon: "🍐" },
+            { name: "Shaftoli po'sti", type: "organic", icon: "🍑" },
+            { name: "O'rik po'sti", type: "organic", icon: "🍑" },
+            { name: "Uzum po'sti", type: "organic", icon: "🍇" },
+            { name: "Qovun po'sti", type: "organic", icon: "🍈" },
+            { name: "Tarvuz po'sti", type: "organic", icon: "🍉" },
+            { name: "Piyoz po'sti", type: "organic", icon: "🧅" },
+            { name: "Sabzi po'sti", type: "organic", icon: "🥕" },
+            { name: "Kartoshka po'sti", type: "organic", icon: "🥔" },
+            { name: "Pomidor po'sti", type: "organic", icon: "🍅" },
+            { name: "Bodring po'sti", type: "organic", icon: "🥒" },
+            { name: "Qalampir po'sti", type: "organic", icon: "🫑" },
+            { name: "Karam po'sti", type: "organic", icon: "🥬" },
+            { name: "Salat bargi", type: "organic", icon: "🥬" },
+            { name: "Ismaloq po'sti", type: "organic", icon: "🍓" },
+            { name: "Banan po'sti", type: "organic", icon: "🍌" },
+            { name: "Anor po'sti", type: "organic", icon: "🍎" },
+            { name: "Limon po'sti", type: "organic", icon: "🍋" },
+            { name: "Apelsin po'sti", type: "organic", icon: "🍊" },
+            { name: "Mandarin po'sti", type: "organic", icon: "🍊" },
+            { name: "Qulupnay po'sti", type: "organic", icon: "🍓" },
+            
+            // Metall chiqindilar (25 ta)
+            { name: "Konserva banka", type: "metal", icon: "🥫" },
+            { name: "Alumin quti", type: "metal", icon: "📦" },
+            { name: "Mis tangacha", type: "metal", icon: "🪙" },
+            { name: "Temir prujina", type: "metal", icon: "🪀" },
+            { name: "Mis sim", type: "metal", icon: "🔌" },
+            { name: "Temir mix", type: "metal", icon: "📌" },
+            { name: "Alyuminiy qoshiq", type: "metal", icon: "🥄" },
+            { name: "Alyuminiy vilka", type: "metal", icon: "🍴" },
+            { name: "Alyuminiy pichoq", type: "metal", icon: "🔪" },
+            { name: "Temir chelak", type: "metal", icon: "🪣" },
+            { name: "Mis idish", type: "metal", icon: "🍲" },
+            { name: "Temir quti", type: "metal", icon: "🗃️" },
+            { name: "Alyuminiy qopqoq", type: "metal", icon: "🔘" },
+            { name: "Mis trubka", type: "metal", icon: "🪝" },
+            { name: "Temir tarmoq", type: "metal", icon: "🕸️" },
+            { name: "Alyuminiy ramka", type: "metal", icon: "🖼️" },
+            { name: "Temir kalit", type: "metal", icon: "🔑" },
+            { name: "Mis zanjir", type: "metal", icon: "⛓️" },
+            { name: "Temir qulf", type: "metal", icon: "🔒" },
+            { name: "Alyuminiy chiroq", type: "metal", icon: "💡" },
+            { name: "Temir eshik", type: "metal", icon: "🚪" },
+            { name: "Mis pans", type: "metal", icon: "🍳" },
+            { name: "Temir qozon", type: "metal", icon: "🍲" },
+            { name: "Alyuminiy choynak", type: "metal", icon: "🫖" },
+            { name: "Temir chang", type: "metal", icon: "🧹" }
+        ];
+        
+        // DOM elementlari
+        const coinsElement = document.getElementById('coins');
+        const energyElement = document.getElementById('energy');
+        const levelElement = document.getElementById('level');
+        const timerBar = document.getElementById('timer-bar');
+        const currentTrash = document.getElementById('current-trash');
+        const trashIcon = document.getElementById('trash-icon');
+        const trashName = document.getElementById('trash-name');
+        const feedbackElement = document.getElementById('feedback');
+        const gameOverScreen = document.getElementById('game-over');
+        const resultTrash = document.getElementById('result-trash');
+        const resultAccuracy = document.getElementById('result-accuracy');
+        const resultCoins = document.getElementById('result-coins');
+        const resultEnergy = document.getElementById('result-energy');
+        const bonusMessage = document.getElementById('bonus-message');
+        const badgeMessage = document.getElementById('badge-message');
+        const restartBtn = document.getElementById('restart-btn');
+        const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+        
+        // Qiyinlik darajasini o'rnatish
+        difficultyBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                difficultyBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentDifficulty = parseInt(this.getAttribute('data-level'));
+                setDifficulty();
+            });
+        });
+        
+        // Qiyinlik darajasini sozlash
+        function setDifficulty() {
+            switch(currentDifficulty) {
+                case 1: // Oson
+                    gameTime = 30;
+                    break;
+                case 2: // O'rta
+                    gameTime = 45;
+                    break;
+                case 3: // Qiyin
+                    gameTime = 60;
+                    break;
+            }
+            timeLeft = gameTime;
+            updateTimerBar();
+        }
+        
+        // O'yinni boshlash
+        function startGame() {
+            coins = 0;
+            energy = 100;
+            level = 1;
+            xp = 0;
+            correctAnswers = 0;
+            totalAnswers = 0;
+            timeLeft = gameTime;
+            
+            updateStats();
+            updateTimerBar();
+            generateNewTrash();
+            gameActive = true;
+            
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        
+        // Taymer yangilash
+        function updateTimer() {
+            timeLeft--;
+            updateTimerBar();
+            
+            if (timeLeft <= 0) {
+                endGame();
+            }
+        }
+        
+        // Taymer panelini yangilash
+        function updateTimerBar() {
+            const percentage = (timeLeft / gameTime) * 100;
+            timerBar.style.width = `${percentage}%`;
+            
+            if (percentage > 50) {
+                timerBar.style.background = 'linear-gradient(90deg, #4CAF50, #FFC107)';
+            } else if (percentage > 20) {
+                timerBar.style.background = 'linear-gradient(90deg, #FFC107, #F44336)';
+            } else {
+                timerBar.style.background = '#F44336';
+            }
+        }
+        
+        // Statistikani yangilash
+        function updateStats() {
+            coinsElement.textContent = coins;
+            energyElement.textContent = energy;
+            levelElement.textContent = level;
+        }
+        
+        // Yangi chiqindi yaratish
+        function generateNewTrash() {
+            const randomIndex = Math.floor(Math.random() * trashItems.length);
+            const trash = trashItems[randomIndex];
+            
+            currentTrash.setAttribute('data-type', trash.type);
+            trashIcon.textContent = trash.icon;
+            trashName.textContent = trash.name;
+        }
+        
+        // Chiqindilarni quti bilan aloqasi
+        const bins = document.querySelectorAll('.bin');
+        bins.forEach(bin => {
+            bin.addEventListener('click', function() {
+                if (!gameActive) return;
+                
+                const binType = this.getAttribute('data-type');
+                const trashType = currentTrash.getAttribute('data-type');
+                
+                checkAnswer(binType, trashType);
+            });
+        });
+        
+        // Javobni tekshirish
+        function checkAnswer(binType, trashType) {
+            totalAnswers++;
+            
+            if (binType === trashType) {
+                // To'g'ri javob
+                correctAnswers++;
+                coins += 10;
+                xp += 10;
+                
+                // Level ko'tarilishini tekshirish
+                if (xp >= level * 50) {
+                    level++;
+                    xp = 0;
+                }
+                
+                feedbackElement.textContent = "Barakalla! To'g'ri saralading!";
+                feedbackElement.className = "feedback correct";
+                
+                // Animatsiya
+                currentTrash.style.transform = "scale(1.2)";
+                setTimeout(() => {
+                    currentTrash.style.transform = "scale(1)";
+                }, 300);
+                
+            } else {
+                // Noto'g'ri javob
+                energy -= 5;
+                feedbackElement.textContent = "Bu chiqindi bu qutiga mos emas!";
+                feedbackElement.className = "feedback incorrect";
+                
+                // Energiya tugab qolganligini tekshirish
+                if (energy <= 0) {
+                    energy = 0;
+                    endGame();
+                }
+            }
+            
+            updateStats();
+            
+            // Keyingi chiqindini yaratish
+            setTimeout(() => {
+                if (gameActive) {
+                    generateNewTrash();
+                    feedbackElement.textContent = "";
+                    feedbackElement.className = "feedback";
+                }
+            }, 1000);
+        }
+        
+        // O'yinni tugatish
+        function endGame() {
+            gameActive = false;
+            clearInterval(timerInterval);
+            
+            // Natijalarni hisoblash
+            const accuracy = totalAnswers > 0 ? Math.round((correctAnswers / totalAnswers) * 100) : 0;
+            
+            // Natijalarni ko'rsatish
+            resultTrash.textContent = correctAnswers;
+            resultAccuracy.textContent = `${accuracy}%`;
+            resultCoins.textContent = coins;
+            resultEnergy.textContent = energy;
+            
+            // Bonus va yorliqlar
+            bonusMessage.textContent = "";
+            badgeMessage.textContent = "";
+            
+            if (accuracy >= 80) {
+                coins += 10;
+                bonusMessage.textContent = `+10 coin bonus!`;
+            }
+            
+            if (accuracy >= 95) {
+                badgeMessage.textContent = "Eko Usta";
+            }
+            
+            // O'yin tugadi ekranini ko'rsatish
+            gameOverScreen.style.display = "flex";
+        }
+        
+        // Qayta boshlash tugmasi
+        restartBtn.addEventListener('click', function() {
+            gameOverScreen.style.display = "none";
+            startGame();
+        });
+        
+        // Dastlabki qiyinlik darajasini sozlash va o'yinni boshlash
+        setDifficulty();
+        startGame();
+        
+        // Drag & Drop funksiyalari (qo'shimcha)
+        currentTrash.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/plain', this.getAttribute('data-type'));
+        });
+        
+        bins.forEach(bin => {
+            bin.addEventListener('dragover', function(e) {
+                e.preventDefault();
+            });
+            
+            bin.addEventListener('drop', function(e) {
+                e.preventDefault();
+                if (!gameActive) return;
+                
+                const trashType = e.dataTransfer.getData('text/plain');
+                const binType = this.getAttribute('data-type');
+                
+                checkAnswer(binType, trashType);
+            });
+        });
+    </script>
+</body>
+</html>

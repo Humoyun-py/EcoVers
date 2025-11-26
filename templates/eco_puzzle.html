@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ekologik Puzzle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a5319, #2d8c2b, #4caf50);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #e8f5e9;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #c8e6c9;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffeb3b;
+        }
+
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .puzzle-section {
+            flex: 1;
+            min-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-section {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #c8e6c9;
+            border-bottom: 2px solid #4caf50;
+            padding-bottom: 8px;
+        }
+
+        .puzzle-container {
+            display: grid;
+            gap: 3px;
+            margin: 20px auto;
+            background: #1b5e20;
+            border: 3px solid #4caf50;
+            border-radius: 8px;
+            padding: 5px;
+            max-width: 500px;
+        }
+
+        .puzzle-piece {
+            background: #388e3c;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            text-align: center;
+            color: white;
+            border-radius: 5px;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .puzzle-piece:hover {
+            background: #4caf50;
+            transform: scale(1.03);
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .puzzle-piece.correct {
+            background: #2e7d32;
+            border: 2px solid #81c784;
+        }
+
+        .puzzle-piece .fact {
+            font-size: 10px;
+            position: absolute;
+            bottom: 2px;
+            left: 2px;
+            right: 2px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px;
+            border-radius: 3px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        button, select {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        #startBtn {
+            background: #4caf50;
+            color: white;
+        }
+
+        #startBtn:hover {
+            background: #388e3c;
+            transform: translateY(-2px);
+        }
+
+        #hintBtn {
+            background: #ff9800;
+            color: white;
+        }
+
+        #hintBtn:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
+        }
+
+        select {
+            background: white;
+            border: 2px solid #4caf50;
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .theme-btn {
+            background: #1b5e20;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .theme-btn.active {
+            background: #4caf50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+        }
+
+        .eco-facts {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            min-height: 100px;
+        }
+
+        .fact-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #4caf50;
+        }
+
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: #4caf50;
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            animation: modalAppear 0.5s;
+        }
+
+        @keyframes modalAppear {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #ffeb3b;
+        }
+
+        .modal p {
+            margin: 15px 0;
+            font-size: 1.2rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .option-btn {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option-btn:hover {
+            background: rgba(76, 175, 80, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-height: 30px;
+        }
+
+        .completed {
+            color: #4caf50;
+        }
+
+        .level-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .level-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .level-dot.active {
+            background: #4caf50;
+            box-shadow: 0 0 10px #4caf50;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            color: #c8e6c9;
+        }
+
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            .puzzle-section, .info-section {
+                min-width: 100%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌿 Ekologik Puzzle</h1>
+            <p class="subtitle">Tabiatni qutqarish uchun puzzle yeching va ekologik bilimlaringizni oshiring!</p>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div>Eco Ball</div>
+                    <div class="stat-value" id="ecoPoints">0</div>
+                </div>
+                <div class="stat-item">
+                    <div>Daraja</div>
+                    <div class="stat-value" id="currentLevel">1</div>
+                </div>
+                <div class="stat-item">
+                    <div>Vaqt</div>
+                    <div class="stat-value" id="timer">60</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="game-area">
+            <div class="puzzle-section">
+                <h2 class="section-title">Puzzle Yechish</h2>
+                
+                <div class="theme-selector">
+                    <div class="theme-btn active" data-theme="0">Daryo</div>
+                    <div class="theme-btn" data-theme="1">O'rmon</div>
+                    <div class="theme-btn" data-theme="2">Shahar</div>
+                </div>
+                
+                <div class="level-indicator">
+                    <div class="level-dot active"></div>
+                    <div class="level-dot"></div>
+                    <div class="level-dot"></div>
+                    <div class="level-dot"></div>
+                    <div class="level-dot"></div>
+                </div>
+                
+                <div class="puzzle-container" id="puzzleContainer">
+                    <!-- Puzzle bo'laklari shu yerda paydo bo'ladi -->
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress" id="progressBar"></div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="startBtn">O'yinni Boshlash</button>
+                    <button id="hintBtn">Maslahat</button>
+                    <select id="levelSelect">
+                        <option value="3">3x3 (Oson)</option>
+                        <option value="4">4x4 (O'rta)</option>
+                        <option value="6">6x6 (Qiyin)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h2 class="section-title">Ekologik Faktlar</h2>
+                <div class="eco-facts" id="ecoFacts">
+                    <div class="fact-item">Puzzle yechish davomida ekologik faktlar shu yerda paydo bo'ladi</div>
+                </div>
+                
+                <h2 class="section-title">O'yin Qoidalari</h2>
+                <div class="eco-facts">
+                    <div class="fact-item">1. Puzzle bo'laklarini bosing va to'g'ri joylashtiring</div>
+                    <div class="fact-item">2. Vaqt ichida ko'proq puzzle yeching va Eco Ball yig'ing</div>
+                    <div class="fact-item">3. Har bir puzzle tugagach, ekologik testni yeching</div>
+                    <div class="fact-item">4. Darajalar oshgan sari puzzle murakkablashadi</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mini-o'yin modali -->
+        <div id="miniGameModal" class="modal">
+            <div class="modal-content">
+                <h2>To'g'ri tanla!</h2>
+                <p id="questionText">Qaysi biri ekologik to'g'ri?</p>
+                <div class="options">
+                    <button class="option-btn" onclick="checkAnswer(0)">Plastikka suv quyish</button>
+                    <button class="option-btn" onclick="checkAnswer(1)">Qayta ishlanadigan idish</button>
+                </div>
+                <div id="result" class="result"></div>
+            </div>
+        </div>
+        
+        <!-- Muvaffaqiyat modali -->
+        <div id="successModal" class="modal">
+            <div class="modal-content">
+                <h2>Tabriklaymiz! 🎉</h2>
+                <p>Siz <span id="completedLevel">1</span>-darajani muvaffaqiyatli yakunladingiz!</p>
+                <p>Topilgan Eco Ball: <span id="pointsEarned">0</span></p>
+                <p>Jami Eco Ball: <span id="totalPoints">0</span></p>
+                <button id="nextLevelBtn" style="margin-top: 20px;">Keyingi Daraja</button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Ekologik Puzzle - Tabiatni qutqatishga yordam bering! 🌍</p>
+        </footer>
+    </div>
+
+    <script>
+        class EcoPuzzleGame {
+            constructor() {
+                this.currentLevel = 1;
+                this.ecoPoints = 0;
+                this.timer = 60;
+                this.timerInterval = null;
+                this.isGameActive = false;
+                this.puzzleSize = 3;
+                this.pieces = [];
+                this.correctOrder = [];
+                this.currentTheme = 0;
+                this.completedPieces = 0;
+                
+                this.ecoFacts = [
+                    "Bitta daraxt 120 kg CO₂ yutadi",
+                    "Plastik dengizga yetib borishi uchun 20 yil kifoya",
+                    "Yer yuzidagi suvning faqat 1% ichish uchun yaroqli",
+                    "Qayta ishlash energiyani 95% gacha tejashi mumkin",
+                    "Har yili 8 million tonna plastik okeanga tashlanadi",
+                    "Elektron chiqindilar dunyo chiqindisining 2% ini tashkil qiladi",
+                    "Qayta ishlangan alyuminiy yangisiga qaraganda 95% kam energiya talab qiladi",
+                    "Dunyo bo'yicha har yili 13 million gektar o'rmon yo'qoladi",
+                    "Suvni tejash uchun dush vaqti 5 daqiqaga qisqartirilsa, yiliga 3700 litr suv tejash mumkin",
+                    "Har bir kishi kuniga o'rtacha 1.5 kg chiqindi ishlab chiqaradi"
+                ];
+                
+                this.miniGameQuestions = [
+                    {
+                        question: "Qaysi biri ekologik to'g'ri?",
+                        options: ["Plastikka suv quyish", "Qayta ishlanadigan idish"],
+                        correct: 1
+                    },
+                    {
+                        question: "Energiyani tejash uchun?",
+                        options: ["Chiroqni yoqib qo'yish", "Chiroqni o'chirish"],
+                        correct: 1
+                    },
+                    {
+                        question: "Transport tanlashda?",
+                        options: ["Yakka avtomobil", "Jamoat transporti"],
+                        correct: 1
+                    },
+                    {
+                        question: "Suvni tejash usuli?",
+                        options: ["Dush ostida uzoq vaqt turish", "Dush vaqtini qisqartirish"],
+                        correct: 1
+                    },
+                    {
+                        question: "Chiqindilarni kamaytirish?",
+                        options: ["Hamma narsani chiqindiga tashlash", "Qayta ishlash va qayta foydalanish"],
+                        correct: 1
+                    }
+                ];
+                
+                this.puzzleThemes = [
+                    {
+                        name: "Daryo — iflos → toza",
+                        before: "🌊\nIflos Daryo",
+                        after: "💧\nToza Daryo",
+                        color: "#1e88e5"
+                    },
+                    {
+                        name: "O'rmon — yongan → tiklangan", 
+                        before: "🔥\nYongan O'rmon",
+                        after: "🌳\nTiklangan O'rmon",
+                        color: "#388e3c"
+                    },
+                    {
+                        name: "Shahar — smog → toza havo",
+                        before: "🏭\nSmog Shahar",
+                        after: "🏙️\nToza Shahar",
+                        color: "#78909c"
+                    }
+                ];
+                
+                this.initializeEventListeners();
+                this.updateDisplay();
+            }
+
+            initializeEventListeners() {
+                document.getElementById('startBtn').addEventListener('click', () => this.startGame());
+                document.getElementById('hintBtn').addEventListener('click', () => this.showHint());
+                document.getElementById('levelSelect').addEventListener('change', () => this.changeLevel());
+                document.getElementById('nextLevelBtn').addEventListener('click', () => this.nextLevel());
+                
+                // Mavzu tanlash
+                document.querySelectorAll('.theme-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentTheme = parseInt(e.target.dataset.theme);
+                        if (this.isGameActive) {
+                            this.generatePuzzle();
+                        }
+                    });
+                });
+            }
+
+            initGame() {
+                this.generatePuzzle();
+                this.updateDisplay();
+            }
+
+            generatePuzzle() {
+                const container = document.getElementById('puzzleContainer');
+                container.innerHTML = '';
+                container.style.gridTemplateColumns = `repeat(${this.puzzleSize}, 1fr)`;
+                
+                this.pieces = [];
+                this.correctOrder = [];
+                this.completedPieces = 0;
+                
+                const theme = this.puzzleThemes[this.currentTheme];
+                
+                for (let i = 0; i < this.puzzleSize * this.puzzleSize; i++) {
+                    const piece = document.createElement('div');
+                    piece.className = 'puzzle-piece';
+                    piece.textContent = `${theme.before}\n\n↓\n\n${theme.after}`;
+                    piece.style.backgroundColor = theme.color;
+                    piece.style.width = `${400/this.puzzleSize}px`;
+                    piece.style.height = `${400/this.puzzleSize}px`;
+                    
+                    // Tasodifiy ekologik fakt qo'shish
+                    if (Math.random() > 0.7) {
+                        const fact = document.createElement('div');
+                        fact.className = 'fact';
+                        fact.textContent = this.ecoFacts[Math.floor(Math.random() * this.ecoFacts.length)];
+                        piece.appendChild(fact);
+                    }
+                    
+                    piece.addEventListener('click', () => this.checkPiece(i));
+                    
+                    container.appendChild(piece);
+                    this.pieces.push(piece);
+                    this.correctOrder.push(i);
+                }
+                
+                this.shufflePieces();
+                this.showRandomFact();
+                this.updateProgress();
+            }
+
+            shufflePieces() {
+                for (let i = this.pieces.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.pieces[i].style.order, this.pieces[j].style.order] = 
+                    [this.pieces[j].style.order, this.pieces[i].style.order];
+                }
+            }
+
+            checkPiece(index) {
+                if (!this.isGameActive) return;
+                
+                const piece = this.pieces[index];
+                if (!piece.classList.contains('correct')) {
+                    piece.classList.add('correct');
+                    this.completedPieces++;
+                    this.updateProgress();
+                    
+                    if (this.isPuzzleComplete()) {
+                        this.completePuzzle();
+                    }
+                }
+            }
+
+            isPuzzleComplete() {
+                return this.completedPieces === this.pieces.length;
+            }
+
+            updateProgress() {
+                const progress = (this.completedPieces / this.pieces.length) * 100;
+                document.getElementById('progressBar').style.width = `${progress}%`;
+            }
+
+            completePuzzle() {
+                clearInterval(this.timerInterval);
+                this.isGameActive = false;
+                document.getElementById('startBtn').disabled = false;
+                
+                const timeBonus = Math.max(0, this.timer);
+                const levelBonus = this.currentLevel * 10;
+                const totalPoints = timeBonus + levelBonus;
+                
+                this.ecoPoints += totalPoints;
+                
+                // Daraja ko'rsatkichini yangilash
+                document.querySelectorAll('.level-dot').forEach((dot, index) => {
+                    dot.classList.toggle('active', index < this.currentLevel);
+                });
+                
+                setTimeout(() => {
+                    this.showSuccessModal(totalPoints);
+                }, 1000);
+                
+                this.updateDisplay();
+            }
+
+            showSuccessModal(pointsEarned) {
+                document.getElementById('completedLevel').textContent = this.currentLevel;
+                document.getElementById('pointsEarned').textContent = pointsEarned;
+                document.getElementById('totalPoints').textContent = this.ecoPoints;
+                document.getElementById('successModal').style.display = 'flex';
+            }
+
+            showMiniGame() {
+                const randomQuestion = this.miniGameQuestions[
+                    Math.floor(Math.random() * this.miniGameQuestions.length)
+                ];
+                
+                document.getElementById('questionText').textContent = randomQuestion.question;
+                const options = document.querySelectorAll('.option-btn');
+                
+                options.forEach((btn, index) => {
+                    btn.textContent = randomQuestion.options[index];
+                    btn.dataset.correct = index === randomQuestion.correct;
+                });
+                
+                document.getElementById('miniGameModal').style.display = 'flex';
+                document.getElementById('result').textContent = '';
+            }
+
+            checkAnswer(selectedIndex) {
+                const result = document.getElementById('result');
+                const options = document.querySelectorAll('.option-btn');
+                
+                const isCorrect = options[selectedIndex].dataset.correct === 'true';
+                
+                if (isCorrect) {
+                    result.textContent = "✅ To'g'ri! +50 ball";
+                    result.style.color = '#4caf50';
+                    this.ecoPoints += 50;
+                } else {
+                    result.textContent = "❌ Noto'g'ri";
+                    result.style.color = '#f44336';
+                }
+                
+                this.updateDisplay();
+                
+                setTimeout(() => {
+                    document.getElementById('miniGameModal').style.display = 'none';
+                    this.showSuccessModal(0);
+                }, 2000);
+            }
+
+            nextLevel() {
+                document.getElementById('successModal').style.display = 'none';
+                this.currentLevel++;
+                this.updateDisplay();
+                this.startGame();
+            }
+
+            startGame() {
+                this.isGameActive = true;
+                this.timer = 60;
+                document.getElementById('startBtn').disabled = true;
+                
+                this.timerInterval = setInterval(() => {
+                    this.timer--;
+                    document.getElementById('timer').textContent = this.timer;
+                    
+                    if (this.timer <= 0) {
+                        clearInterval(this.timerInterval);
+                        this.isGameActive = false;
+                        document.getElementById('startBtn').disabled = false;
+                        alert("Vaqt tugadi! Qaytadan urinib ko'ring.");
+                    }
+                }, 1000);
+                
+                this.generatePuzzle();
+            }
+
+            showRandomFact() {
+                const randomFact = this.ecoFacts[
+                    Math.floor(Math.random() * this.ecoFacts.length)
+                ];
+                
+                const factsContainer = document.getElementById('ecoFacts');
+                const factElement = document.createElement('div');
+                factElement.className = 'fact-item';
+                factElement.textContent = randomFact;
+                
+                factsContainer.insertBefore(factElement, factsContainer.firstChild);
+                
+                // Faqat oxirgi 3 ta faktni saqlab qolish
+                if (factsContainer.children.length > 3) {
+                    factsContainer.removeChild(factsContainer.lastChild);
+                }
+            }
+
+            showHint() {
+                const hints = [
+                    "Puzzle bo'laklarini to'g'ri joylashtirish orqali tabiatning qutqarilishiga yordam bering!",
+                    "Tezroq yechish orqali ko'proq Eco Ball yig'ishingiz mumkin!",
+                    "Har bir puzzleda ekologik faktlar bilan tanishishingiz mumkin!",
+                    "Darajalar oshgan sari puzzle murakkablashadi, lekin ballar ham ko'payadi!"
+                ];
+                
+                alert(hints[Math.floor(Math.random() * hints.length)]);
+            }
+
+            changeLevel() {
+                const select = document.getElementById('levelSelect');
+                this.puzzleSize = parseInt(select.value);
+                this.currentLevel = 1;
+                this.startGame();
+            }
+
+            updateDisplay() {
+                document.getElementById('ecoPoints').textContent = this.ecoPoints;
+                document.getElementById('currentLevel').textContent = this.currentLevel;
+                document.getElementById('timer').textContent = this.timer;
+            }
+        }
+
+        // O'yinni ishga tushirish
+        const game = new EcoPuzzleGame();
+
+        // Global funksiyalar
+        function checkAnswer(index) {
+            game.checkAnswer(index);
+        }
+
+        // Sahifa yuklanganda o'yinni boshlash
+        window.onload = function() {
+            game.initGame();
+        };
+    </script>
+</body>
+</html>

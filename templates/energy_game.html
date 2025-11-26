@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energiya Qutqaruvchi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #2c7744, #5a9e6a);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .stat-item img {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+        
+        .game-area {
+            padding: 20px;
+            min-height: 400px;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #2c7744, #5a9e6a);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to right, #3498db, #2ecc71);
+        }
+        
+        .center {
+            text-align: center;
+        }
+        
+        .room-image {
+            width: 100%;
+            height: 300px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f0f0f0"/><rect x="20" y="20" width="60" height="40" fill="%23d0d0d0"/><rect x="30" y="30" width="40" height="20" fill="%23c0c0c0"/><rect x="10" y="70" width="80" height="20" fill="%23a0a0a0"/><circle cx="80" cy="30" r="5" fill="%23ffd700"/></svg>');
+            background-size: cover;
+        }
+        
+        .energy-waste {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            background-color: rgba(255, 0, 0, 0.3);
+            border: 2px dashed red;
+        }
+        
+        .energy-waste:hover {
+            transform: scale(1.1);
+            background-color: rgba(255, 0, 0, 0.5);
+        }
+        
+        .found {
+            opacity: 0.5;
+            transform: scale(0.8);
+            pointer-events: none;
+        }
+        
+        .timer {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 10px 0;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .option {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .option:hover {
+            background-color: #f0f0f0;
+            transform: translateX(5px);
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        .bulb-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .bulb {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #f1c40f;
+            box-shadow: 0 0 10px #f1c40f;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .bulb.off {
+            background-color: #7f8c8d;
+            box-shadow: none;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .result-value {
+            font-weight: bold;
+            color: #2c7744;
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .room-image {
+                height: 200px;
+            }
+            
+            .bulb {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🟡 ENERGIYA QUTQARUVCHISI</h1>
+            <p>Energiya tejashni o'rganing va yomon odatlardan xalos bo'ling!</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233498db'><path d='M13 2v8h8a8 8 0 11-8-8z'/></svg>" alt="Coin">
+                <span id="coins">100</span> Coin
+            </div>
+            <div class="stat-item">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e74c3c'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>" alt="Energy">
+                <span id="energy">100</span> Energiya
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <!-- Boshlash ekrani -->
+            <div id="start-screen" class="screen active">
+                <div class="center">
+                    <h2>Energiya Qutqaruvchi O'yiniga Xush Kelibsiz!</h2>
+                    <p>Bu o'yin orqali siz energiyani qanday tejashni o'rganasiz va yomon odatlardan xalos bo'lasiz.</p>
+                    
+                    <div class="room-image"></div>
+                    
+                    <div class="options">
+                        <button class="btn pulse" onclick="startGame('find-mode')">🔍 Topish O'yini</button>
+                        <button class="btn btn-secondary" onclick="startGame('choice-mode')">❓ To'g'ri Variantni Tanla</button>
+                        <button class="btn" onclick="startGame('bulb-mode')">💡 Lampochka O'chirish</button>
+                    </div>
+                    
+                    <div class="message info">
+                        <p>Har bir o'yin sizga energiya tejash haqida yangi bilimlar beradi!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Topish o'yini ekrani -->
+            <div id="find-mode" class="screen">
+                <div class="center">
+                    <h2>Energiya Isrofini Toping!</h2>
+                    <p>Rasm ichida energiya isrof qilayotgan 5 ta elementni toping.</p>
+                    <p>Vaqt: <span id="timer" class="timer">20</span> soniya</p>
+                    
+                    <div class="room-image" id="find-room">
+                        <!-- Energiya isrofi elementlari JavaScript orqali qo'shiladi -->
+                    </div>
+                    
+                    <div class="message info">
+                        <p>Topilgan: <span id="found-count">0</span> / 5</p>
+                    </div>
+                    
+                    <button class="btn" onclick="backToStart()">← Bosh Menyu</button>
+                </div>
+            </div>
+            
+            <!-- Variant tanlash ekrani -->
+            <div id="choice-mode" class="screen">
+                <div class="center">
+                    <h2>To'g'ri Energiya Tejash Usulini Tanlang</h2>
+                    <p>Quyidagi savolga to'g'ri javobni tanlang:</p>
+                    
+                    <div class="message info">
+                        <p id="question">Qaysi usul energiyani tejaydi?</p>
+                    </div>
+                    
+                    <div class="options" id="options-container">
+                        <!-- Variantlar JavaScript orqali qo'shiladi -->
+                    </div>
+                    
+                    <button class="btn" onclick="backToStart()">← Bosh Menyu</button>
+                </div>
+            </div>
+            
+            <!-- Lampochka o'yini ekrani -->
+            <div id="bulb-mode" class="screen">
+                <div class="center">
+                    <h2>Lampochkalarni O'chiring!</h2>
+                    <p>Yongan lampochkalarni 1 soniya ichida o'chiring.</p>
+                    <p>O'tkazib yuborilgan lampochkalar: <span id="missed-bulbs">0</span> / 3</p>
+                    
+                    <div class="bulb-container" id="bulb-container">
+                        <!-- Lampochkalar JavaScript orqali qo'shiladi -->
+                    </div>
+                    
+                    <div class="message info">
+                        <p>O'chirilgan lampochkalar: <span id="turned-off">0</span> / 20</p>
+                    </div>
+                    
+                    <button class="btn" onclick="backToStart()">← Bosh Menyu</button>
+                </div>
+            </div>
+            
+            <!-- Natijalar ekrani -->
+            <div id="result-screen" class="screen">
+                <div class="center">
+                    <h2>O'yin Natijalari</h2>
+                    
+                    <div id="result-content">
+                        <!-- Natijalar JavaScript orqali qo'shiladi -->
+                    </div>
+                    
+                    <button class="btn" onclick="backToStart()">Yana O'ynash</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // O'yin ma'lumotlari
+        let gameData = {
+            coins: 100,
+            energy: 100,
+            currentScreen: 'start-screen'
+        };
+        
+        // Elementlarni topish
+        const coinsElement = document.getElementById('coins');
+        const energyElement = document.getElementById('energy');
+        
+        // O'yinni boshlash
+        function startGame(mode) {
+            // Joriy ekranni yashirish
+            document.getElementById(gameData.currentScreen).classList.remove('active');
+            
+            // Yangi ekranni ko'rsatish
+            document.getElementById(mode).classList.add('active');
+            gameData.currentScreen = mode;
+            
+            // O'yin rejimini boshlash
+            if (mode === 'find-mode') {
+                startFindGame();
+            } else if (mode === 'choice-mode') {
+                startChoiceGame();
+            } else if (mode === 'bulb-mode') {
+                startBulbGame();
+            }
+        }
+        
+        // Bosh menyuga qaytish
+        function backToStart() {
+            document.getElementById(gameData.currentScreen).classList.remove('active');
+            document.getElementById('start-screen').classList.add('active');
+            gameData.currentScreen = 'start-screen';
+        }
+        
+        // Topish o'yini
+        function startFindGame() {
+            const room = document.getElementById('find-room');
+            room.innerHTML = '';
+            
+            // Energiya isrof elementlarini yaratish
+            const wastes = [
+                {id: 1, name: "Yongan lampochka", top: "20%", left: "15%", icon: "💡"},
+                {id: 2, name: "Ishlab turgan televizor", top: "40%", left: "70%", icon: "📺"},
+                {id: 3, name: "Zaryadka shtekkerda qolgan", top: "70%", left: "10%", icon: "🔌"},
+                {id: 4, name: "Ochiq deraza", top: "10%", left: "60%", icon: "🪟"},
+                {id: 5, name: "Yonib turgan kompyuter", top: "60%", left: "40%", icon: "💻"}
+            ];
+            
+            let foundCount = 0;
+            document.getElementById('found-count').textContent = foundCount;
+            
+            wastes.forEach(waste => {
+                const element = document.createElement('div');
+                element.className = 'energy-waste';
+                element.style.top = waste.top;
+                element.style.left = waste.left;
+                element.textContent = waste.icon;
+                element.title = waste.name;
+                
+                element.addEventListener('click', function() {
+                    if (!this.classList.contains('found')) {
+                        this.classList.add('found');
+                        foundCount++;
+                        document.getElementById('found-count').textContent = foundCount;
+                        
+                        // Coin qo'shish
+                        gameData.coins += 4;
+                        updateStats();
+                        
+                        // Hammasini topganini tekshirish
+                        if (foundCount === wastes.length) {
+                            gameData.coins += 20; // Bonus
+                            updateStats();
+                            
+                            setTimeout(() => {
+                                showResult("Tabriklaymiz! Siz barcha energiya isroflarini topdingiz va 20 bonus coin qo'lga kiritdingiz!");
+                            }, 1000);
+                        }
+                    }
+                });
+                
+                room.appendChild(element);
+            });
+            
+            // Taymerni boshlash
+            let timeLeft = 20;
+            document.getElementById('timer').textContent = timeLeft;
+            
+            const timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    showResult("Vaqt tugadi! Siz " + foundCount + " ta energiya isrofini topdingiz.");
+                }
+            }, 1000);
+        }
+        
+        // Variant tanlash o'yini
+        function startChoiceGame() {
+            const questions = [
+                {
+                    question: "Qaysi usul energiyani tejaydi?",
+                    options: [
+                        "Chiroqni o'chirgan holda xonani tark etish",
+                        "Telefonni butun kechaga zaryadga qo'yish",
+                        "Televizorni fon uchun yoqib qo'yish"
+                    ],
+                    correct: 0
+                },
+                {
+                    question: "Qaysi qurilma eng ko'p energiya sarflaydi?",
+                    options: [
+                        "LED lampochka",
+                        "Eski televizor",
+                        "Zaryadkachi"
+                    ],
+                    correct: 1
+                },
+                {
+                    question: "Energiya tejashning eng samarali usuli?",
+                    options: [
+                        "Barcha qurilmalarni uxlash vaqtida o'chirib qo'yish",
+                        "Faqat lampochkalarni o'chirish",
+                        "Ishlatilmayotgan qurilmalarni rozetkadan uzish"
+                    ],
+                    correct: 2
+                }
+            ];
+            
+            const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+            
+            document.getElementById('question').textContent = randomQuestion.question;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            randomQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option;
+                
+                optionElement.addEventListener('click', function() {
+                    // Barcha variantlarni noaktiv qilish
+                    document.querySelectorAll('.option').forEach(opt => {
+                        opt.style.pointerEvents = 'none';
+                    });
+                    
+                    if (index === randomQuestion.correct) {
+                        this.classList.add('correct');
+                        gameData.coins += 5;
+                        updateStats();
+                        
+                        setTimeout(() => {
+                            showResult("To'g'ri! Siz 5 coin qo'lga kiritdingiz.");
+                        }, 1500);
+                    } else {
+                        this.classList.add('incorrect');
+                        gameData.energy -= 3;
+                        updateStats();
+                        
+                        // To'g'ri javobni ko'rsatish
+                        document.querySelectorAll('.option')[randomQuestion.correct].classList.add('correct');
+                        
+                        setTimeout(() => {
+                            showResult("Noto'g'ri javob. Siz 3 energiya yo'qotdingiz.");
+                        }, 1500);
+                    }
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+        
+        // Lampochka o'yini
+        function startBulbGame() {
+            const bulbContainer = document.getElementById('bulb-container');
+            bulbContainer.innerHTML = '';
+            
+            let turnedOff = 0;
+            let missed = 0;
+            document.getElementById('turned-off').textContent = turnedOff;
+            document.getElementById('missed-bulbs').textContent = missed;
+            
+            // 20 ta lampochka yaratish
+            for (let i = 0; i < 20; i++) {
+                const bulb = document.createElement('div');
+                bulb.className = 'bulb';
+                
+                // Tasodifiy vaqtda lampochkani yoqish
+                setTimeout(() => {
+                    bulb.classList.remove('off');
+                    
+                    // 1 soniyadan keyin o'chirish
+                    setTimeout(() => {
+                        if (!bulb.classList.contains('off')) {
+                            bulb.classList.add('off');
+                            missed++;
+                            document.getElementById('missed-bulbs').textContent = missed;
+                            
+                            if (missed >= 3) {
+                                showResult("Siz 3 ta lampochkani o'chira olmadingiz. O'yin tugadi.");
+                            }
+                        }
+                    }, 1000);
+                }, Math.random() * 10000 + 1000); // 1-11 soniya oralig'ida
+                
+                bulb.addEventListener('click', function() {
+                    if (!this.classList.contains('off')) {
+                        this.classList.add('off');
+                        turnedOff++;
+                        document.getElementById('turned-off').textContent = turnedOff;
+                        gameData.coins += 1;
+                        updateStats();
+                        
+                        if (turnedOff === 20) {
+                            showResult("Tabriklaymiz! Siz barcha lampochkalarni o'chirdingiz va 20 coin qo'lga kiritdingiz!");
+                        }
+                    }
+                });
+                
+                bulbContainer.appendChild(bulb);
+            }
+        }
+        
+        // Natijalarni ko'rsatish
+        function showResult(message) {
+            document.getElementById(gameData.currentScreen).classList.remove('active');
+            
+            const resultContent = document.getElementById('result-content');
+            resultContent.innerHTML = `
+                <div class="message success">
+                    <p>${message}</p>
+                </div>
+                <div style="margin-top: 20px;">
+                    <div class="result-item">
+                        <span>Joriy Coinlar:</span>
+                        <span class="result-value">${gameData.coins}</span>
+                    </div>
+                    <div class="result-item">
+                        <span>Joriy Energiya:</span>
+                        <span class="result-value">${gameData.energy}</span>
+                    </div>
+                </div>
+                <div class="message info" style="margin-top: 20px;">
+                    <p>Energiya tejash - bu nafaqat pul tejash, balki atrof-muhimizni muhofaza qilishdir!</p>
+                </div>
+            `;
+            
+            document.getElementById('result-screen').classList.add('active');
+            gameData.currentScreen = 'result-screen';
+        }
+        
+        // Statistikani yangilash
+        function updateStats() {
+            coinsElement.textContent = gameData.coins;
+            energyElement.textContent = gameData.energy;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suv Tejamkorlik O'yini</title>
+    <style>
+        :root {
+            --primary-color: #2ABBF0;
+            --accent-color: #74D4FF;
+            --correct-color: #4CAF50;
+            --wrong-color: #F44336;
+            --text-color: #333;
+            --light-bg: #f8fdff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: var(--light-bg);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .timer {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .coins, .energy {
+            font-weight: bold;
+        }
+        
+        .coins {
+            color: #FFD700;
+        }
+        
+        .energy {
+            color: var(--correct-color);
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .question {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-correct {
+            background-color: var(--correct-color);
+            color: white;
+        }
+        
+        .btn-wrong {
+            background-color: var(--wrong-color);
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .progress {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .result-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        
+        .result-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .btn-restart {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            margin-top: 15px;
+        }
+        
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: var(--correct-color);
+        }
+        
+        .feedback.wrong {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: var(--wrong-color);
+        }
+        
+        @media (max-width: 480px) {
+            .buttons {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💧 Suv Tejamkorlik O'yini</h1>
+            <p>Suvni tejash bo'yicha to'g'ri usullarni tanlang!</p>
+        </header>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <span>⏲️</span>
+                <span class="timer">45</span>
+            </div>
+            <div class="stat-item">
+                <span>🟡</span>
+                <span class="coins">0</span>
+            </div>
+            <div class="stat-item">
+                <span>🔋</span>
+                <span class="energy">100</span>
+            </div>
+        </div>
+        
+        <div class="progress">
+            <div class="progress-bar"></div>
+        </div>
+        
+        <div class="card">
+            <div class="icon">🚰</div>
+            <div class="question" id="question-text">Savol matni bu yerda ko'rinadi</div>
+            <div class="feedback" id="feedback"></div>
+            <div class="buttons">
+                <button class="btn-correct" id="btn-correct">✔️ To'g'ri</button>
+                <button class="btn-wrong" id="btn-wrong">✖️ Noto'g'ri</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="result-modal">
+        <div class="modal-content">
+            <h2>O'yin Tugadi!</h2>
+            <div class="result-stats">
+                <div class="result-item">
+                    <div>⭐️ To'g'ri javoblar</div>
+                    <div class="result-value" id="correct-answers">0</div>
+                </div>
+                <div class="result-item">
+                    <div>🟡 Yig'ilgan coin</div>
+                    <div class="result-value" id="total-coins">0</div>
+                </div>
+                <div class="result-item">
+                    <div>🔋 Yo'qotilgan energiya</div>
+                    <div class="result-value" id="lost-energy">0</div>
+                </div>
+            </div>
+            <button class="btn-restart" id="btn-restart">Yana o'ynash</button>
+        </div>
+    </div>
+
+    <script>
+        // O'yin ma'lumotlari
+        const questions = [
+            {
+                icon: "🚰",
+                text: "Kran tomchilab tursa ham, suv oz ketadi, ahamiyatli emas.",
+                correct: false
+            },
+            {
+                icon: "🚿",
+                text: "20 daqiqa dush qabul qilish – normal.",
+                correct: false
+            },
+            {
+                icon: "🪥",
+                text: "Tish yuvayotganda suvni o'chirib qo'yish – yaxshi odat.",
+                correct: true
+            },
+            {
+                icon: "🧺",
+                text: "Kir yuvish mashinasini to'la bo'lganda yoqish.",
+                correct: true
+            },
+            {
+                icon: "🚗",
+                text: "Mashinani har kuni shlang bilan yuvish kerak.",
+                correct: false
+            },
+            {
+                icon: "🌧",
+                text: "Yomg'ir suvini o'simliklarga ishlatish mumkin.",
+                correct: true
+            },
+            {
+                icon: "🌡",
+                text: "Issiq suvni uzoq kutish uchun uzluksiz oqizib qo'yish – yaxshi.",
+                correct: false
+            },
+            {
+                icon: "🍃",
+                text: "Bog'ni ertalab yoki kechqurun sug'orish – suvni tejaydi.",
+                correct: true
+            },
+            {
+                icon: "🥤",
+                text: "Bir martalik plastik idishlarni kamroq ishlatish suv resurslarini asraydi.",
+                correct: true
+            },
+            {
+                icon: "🧼",
+                text: "Qo'l yuvayotganda suvni o'chirish shart emas.",
+                correct: false
+            }
+        ];
+
+        // O'yin holati
+        let gameState = {
+            currentQuestion: 0,
+            coins: 0,
+            energy: 100,
+            correctAnswers: 0,
+            timer: 45,
+            timerInterval: null,
+            gameOver: false
+        };
+
+        // DOM elementlari
+        const questionText = document.getElementById('question-text');
+        const questionIcon = document.querySelector('.icon');
+        const timerElement = document.querySelector('.timer');
+        const coinsElement = document.querySelector('.coins');
+        const energyElement = document.querySelector('.energy');
+        const progressBar = document.querySelector('.progress-bar');
+        const btnCorrect = document.getElementById('btn-correct');
+        const btnWrong = document.getElementById('btn-wrong');
+        const feedbackElement = document.getElementById('feedback');
+        const resultModal = document.getElementById('result-modal');
+        const correctAnswersElement = document.getElementById('correct-answers');
+        const totalCoinsElement = document.getElementById('total-coins');
+        const lostEnergyElement = document.getElementById('lost-energy');
+        const btnRestart = document.getElementById('btn-restart');
+
+        // O'yinni boshlash
+        function startGame() {
+            gameState = {
+                currentQuestion: 0,
+                coins: 0,
+                energy: 100,
+                correctAnswers: 0,
+                timer: 45,
+                timerInterval: null,
+                gameOver: false
+            };
+            
+            updateUI();
+            showQuestion();
+            startTimer();
+        }
+
+        // Savolni ko'rsatish
+        function showQuestion() {
+            if (gameState.currentQuestion >= questions.length) {
+                endGame();
+                return;
+            }
+            
+            const question = questions[gameState.currentQuestion];
+            questionIcon.textContent = question.icon;
+            questionText.textContent = question.text;
+            feedbackElement.style.display = 'none';
+            
+            // Progress bar yangilash
+            progressBar.style.width = `${(gameState.currentQuestion / questions.length) * 100}%`;
+        }
+
+        // Taymerni boshlash
+        function startTimer() {
+            clearInterval(gameState.timerInterval);
+            
+            gameState.timerInterval = setInterval(() => {
+                gameState.timer--;
+                timerElement.textContent = gameState.timer;
+                
+                if (gameState.timer <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        // UI ni yangilash
+        function updateUI() {
+            coinsElement.textContent = gameState.coins;
+            energyElement.textContent = gameState.energy;
+            timerElement.textContent = gameState.timer;
+        }
+
+        // Javobni tekshirish
+        function checkAnswer(userAnswer) {
+            if (gameState.gameOver) return;
+            
+            const question = questions[gameState.currentQuestion];
+            const isCorrect = (userAnswer === question.correct);
+            
+            // Feedback ko'rsatish
+            feedbackElement.textContent = isCorrect ? 
+                "To'g'ri javob! +20 coin" : 
+                "Noto'g'ri javob! -10 energiya";
+            feedbackElement.className = `feedback ${isCorrect ? 'correct' : 'wrong'}`;
+            feedbackElement.style.display = 'block';
+            
+            // Natijalarni yangilash
+            if (isCorrect) {
+                gameState.coins += 20;
+                gameState.correctAnswers++;
+            } else {
+                gameState.energy -= 10;
+            }
+            
+            updateUI();
+            
+            // Keyingi savolga o'tish
+            setTimeout(() => {
+                gameState.currentQuestion++;
+                if (gameState.currentQuestion < questions.length) {
+                    showQuestion();
+                } else {
+                    endGame();
+                }
+            }, 1500);
+        }
+
+        // O'yinni tugatish
+        function endGame() {
+            gameState.gameOver = true;
+            clearInterval(gameState.timerInterval);
+            
+            // Bonus coin
+            if (gameState.timer > 0) {
+                gameState.coins += 10;
+                updateUI();
+            }
+            
+            // Natijalarni ko'rsatish
+            correctAnswersElement.textContent = gameState.correctAnswers;
+            totalCoinsElement.textContent = gameState.coins;
+            lostEnergyElement.textContent = 100 - gameState.energy;
+            
+            // Modalni ko'rsatish
+            resultModal.style.display = 'flex';
+        }
+
+        // Event listenerlar
+        btnCorrect.addEventListener('click', () => checkAnswer(true));
+        btnWrong.addEventListener('click', () => checkAnswer(false));
+        btnRestart.addEventListener('click', () => {
+            resultModal.style.display = 'none';
+            startGame();
+        });
+
+        // O'yinni boshlash
+        startGame();
+    </script>
+</body>
+</html>

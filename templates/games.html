@@ -1,0 +1,303 @@
+{% extends "base.html" %} {% block title %}O'yinlar - EcoVerse{% endblock %} {%
+block content %}
+
+<style>
+    .game-card {
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .game-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .game-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .game-header {
+        background: linear-gradient(135deg, #1b5e20, #2e7d32);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 0 0 30px 30px;
+    }
+
+    .stats-card {
+        background: linear-gradient(135deg, #ffd700, #ffa000);
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .badge-eco {
+        background: #2e7d32;
+        color: white;
+    }
+
+    .energy-cost {
+        color: #ff6b6b;
+        font-weight: bold;
+    }
+
+    .reward-coins {
+        color: #ffd700;
+        font-weight: bold;
+    }
+</style>
+
+<div class="game-header">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3">🎮 Ekologik O'yinlar</h1>
+        <p class="lead mb-0">
+            O'yinlar orqali ekologiya haqida bilim oling, coinlar yuting va tabiatni
+            himoya qilishni o'rganing!
+        </p>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <!-- User Stats -->
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="stats-card text-center">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h3>{{ user.coins }}</h3>
+                        <small>💰 Coinlar</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h3>{{ user.energy }}</h3>
+                        <small>⚡️ Energiya</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h3>{{ user.streak }}</h3>
+                        <small>🔥 Streak</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h3>{{ quiz_count }}</h3>
+                        <small>📝 Testlar</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Games Grid -->
+    <div class="row">
+        <!-- Ekologik Test O'yini -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🧠</span>
+                    <h4 class="card-title fw-bold text-success">Ekologik Test</h4>
+                    <p class="card-text">
+                        Ekologiya bo'yicha qiziqarli savollarga javob bering va bilimingizni
+                        sinovdan o'tkazing.
+                    </p>
+
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 5-10 savol</span>
+                        <span class="badge badge-eco me-2">⭐️ Har qiyinlik</span>
+                    </div>
+
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +25 coin</span> |
+                            <span class="energy-cost">⚡️ -15 energiya</span>
+                        </small>
+                    </div>
+
+                    <a href="{{ url_for('ml_quiz') }}" class="btn btn-success btn-lg w-100">
+                        <i class="fas fa-play me-2"></i>O'ynash
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Qayta Ishlash O'yini -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">♻️</span>
+                    <h4 class="card-title fw-bold text-primary">Qayta Ishlash O'yini</h4>
+                    <p class="card-text">
+                        Chiqindilarni to'g'ri idishga tez va aniq tashlang. Tabiatni
+                        ifloslanishdan saqlang!
+                    </p>
+
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 3 daraja</span>
+                        <span class="badge badge-eco me-2">⏱️ Vaqt cheklangan</span>
+                    </div>
+
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +30 coin</span> |
+                            <span class="energy-cost">⚡️ -20 energiya</span>
+                        </small>
+                    </div>
+                    <a href="{{ url_for('recycle_game') }}" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-play me-2"></i>O'ynash
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Energiya Tejamkorlik -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">💡</span>
+                    <h4 class="card-title fw-bold text-warning">Energiya Tejamkorlik</h4>
+                    <p class="card-text">
+                        Uyda energiya tejash usullarini toping va tabiatni himoya qilishga
+                        yordam bering.
+                    </p>
+
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 5 bosqich</span>
+                        <span class="badge badge-eco me-2">🔍 Topish o'yini</span>
+                    </div>
+
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +20 coin</span> |
+                            <span class="energy-cost">⚡️ -10 energiya</span>
+                        </small>
+                    </div>
+
+                    <a href="{{ url_for('energy_game') }}" class="btn btn-warning btn-lg w-100">
+                        <i class="fas fa-play me-2"></i>O'ynash
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Games Row -->
+    <div class="row">
+        <!-- Suv Tejamkorlik -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">💧</span>
+                    <h5 class="card-title fw-bold text-info">Suv Tejamkorlik</h5>
+                    <p class="card-text">
+                        Suvni tejash usullarini o'rganing va suv resurslarini himoya qiling.
+                    </p>
+                    <a href="{{ url_for('suv_tejash') }}" class="btn btn-info w-100">
+                        <i class="fas fa-play me-2"></i>O'ynash
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daraxt Ekish -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🌳</span>
+                    <h5 class="card-title fw-bold text-success">Virtual Daraxt Ekish</h5>
+                    <p class="card-text">
+                        Virtual daraxtlaringizni ekib, ularni parvarish qiling va
+                        o'sishingizni kuzating.
+                    </p>
+                    <a href="{{ url_for('virtual_daraxtekish') }}" class="btn btn-success w-100">
+                        <i class="fas fa-play me-2"></i>O'ynash
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ekologik Puzzle -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🧩</span>
+                    <h5 class="card-title fw-bold text-purple">Ekologik Puzzle</h5>
+                    <p class="card-text">
+                        Tabiat rasmlaridan puzzle yeching va ekologik bilimlaringizni
+                        oshiring.
+                    </p>
+                    <a href="{{ url_for('eco_puzzle') }}" class="btn btn-purple w-100"
+                        style="background: #6f42c1; color: white">
+                        <i class="fas fa-play me-2"></i>O'ynash
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Game Instructions -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>O'yin Qoidalari
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>🎯 O'ynash uchun:</h6>
+                            <ul>
+                                <li>Energiya va coinlaringiz yetarli ekanligini tekshiring</li>
+                                <li>O'yin qoidalarini diqqat bilan o'qing</li>
+                                <li>Vaqtingizni samarali boshqaring</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>💰 Mukofotlar:</h6>
+                            <ul>
+                                <li>Har bir o'yin uchun coin mukofotlari</li>
+                                <li>Streak va statistikangizni oshiring</li>
+                                <li>Reytingda yuqori o'rinlarni egallang</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %} {% block scripts %}
+<script>
+    var userEnergy = {{ user.energy }};
+
+    // O'yin kartalari uchun interaktivlik
+    document.addEventListener('DOMContentLoaded', function () {
+        const gameCards = document.querySelectorAll('.game-card');
+
+        gameCards.forEach(card => {
+            card.addEventListener('mouseenter', function () {
+                this.style.cursor = 'pointer';
+            });
+
+            card.addEventListener('click', function () {
+                const btn = this.querySelector('button, a');
+                if (btn && !btn.disabled) {
+                    btn.click();
+                }
+            });
+        });
+
+        // Energiya tekshirish
+        function checkEnergyForGame(gameEnergyCost) {
+            if (userEnergy < gameEnergyCost) {
+                alert(`Energiya yetarli emas! Sizda ${ userEnergy } energiya bor, kerak: ${ gameEnergyCost }`);
+                return false;
+            }
+            return true;
+        }
+    });
+</script>
+{% endblock %}
