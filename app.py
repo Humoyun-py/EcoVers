@@ -1724,12 +1724,155 @@ def add_energy_pack():
         return jsonify({'success': False, 'error': str(e)})
 
 # FOYDALANUVCHI ROUTE'LARI
+# app.py ga quyidagi o'yin route'larini qo'shing
+
 @app.route('/games')
 @login_required
 def games():
-    quiz_count = QuizResult.query.filter_by(user_id=current_user.id).count()
-    return render_template('games.html', user=current_user, quiz_count=quiz_count)
+    """O'yinlar sahifasi"""
+    try:
+        quiz_count = QuizResult.query.filter_by(user_id=current_user.id).count()
+        
+        return render_template('games.html', 
+                             user=current_user, 
+                             quiz_count=quiz_count)
+    except Exception as e:
+        print(f"Games route xatosi: {str(e)}")
+        flash('O\'yinlar sahifasi yuklanmadi!', 'error')
+        return redirect(url_for('dashboard'))
 
+@app.route('/recycle_game')
+@login_required
+def recycle_game():
+    """Qayta ishlash o'yini"""
+    try:
+        # Energiya tekshirish
+        energy_cost = 20
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        # Energiya olib tashlash
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('recycle_game.html', user=current_user)
+    except Exception as e:
+        print(f"Recycle game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+@app.route('/energy_game')
+@login_required
+def energy_game():
+    """Energiya tejash o'yini"""
+    try:
+        # Energiya tekshirish
+        energy_cost = 10
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        # Energiya olib tashlash
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('energy_game.html', user=current_user)
+    except Exception as e:
+        print(f"Energy game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+@app.route('/suv_tejash')
+@login_required
+def suv_tejash():
+    """Suv tejash o'yini"""
+    try:
+        return render_template('suv_tejash.html', user=current_user)
+    except Exception as e:
+        print(f"Suv tejash game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+@app.route('/virtual_daraxtekish')
+@login_required
+def virtual_daraxtekish():
+    """Virtual daraxt ekish o'yini"""
+    try:
+        return render_template('virtual_daraxtekish.html', user=current_user)
+    except Exception as e:
+        print(f"Virtual daraxt ekish game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+@app.route('/eco_puzzle')
+@login_required
+def eco_puzzle():
+    """Ekologik puzzle o'yini"""
+    try:
+        return render_template('eco_puzzle.html', user=current_user)
+    except Exception as e:
+        print(f"Eco puzzle game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# O'yin natijalarini saqlash API'lari
+@app.route('/game/complete', methods=['POST'])
+@login_required
+def complete_game():
+    """O'yinni tugatish va mukofotlarni berish"""
+    try:
+        data = request.get_json()
+        game_type = data.get('game_type')
+        score = data.get('score', 0)
+        coins_earned = data.get('coins_earned', 0)
+        
+        # Mukofotlarni berish
+        current_user.coins += coins_earned
+        
+        # Tajriba qo'shish
+        exp_gained = coins_earned // 2
+        current_user.experience += exp_gained
+        
+        # Daraja yangilash
+        level_up = check_level_up(current_user)
+        
+        # Notification yaratish
+        game_names = {
+            'quiz': 'Ekologik Test',
+            'recycle': 'Qayta Ishlash O\'yini',
+            'energy': 'Energiya Tejamkorlik',
+            'water': 'Suv Tejamkorlik',
+            'tree': 'Virtual Daraxt Ekish',
+            'puzzle': 'Ekologik Puzzle'
+        }
+        
+        game_name = game_names.get(game_type, 'O\'yin')
+        
+        notification = Notification(
+            user_id=current_user.id,
+            title='🎮 O\'yin Tugadi!',
+            message=f'{game_name}da {score} ball to\'pladingiz! +{coins_earned} coin',
+            notification_type='game',
+            is_read=False
+        )
+        db.session.add(notification)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'O\'yin tugadi! +{coins_earned} coin yutib oldingiz!',
+            'new_coins': current_user.coins,
+            'new_experience': current_user.experience,
+            'level_up': level_up,
+            'new_level': current_user.level if level_up else None
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)})
+    
 @app.route('/news')
 @login_required
 def news():
