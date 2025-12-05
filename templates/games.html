@@ -235,6 +235,553 @@ block content %}
             </div>
         </div>
     </div>
+
+    <!-- New Educational Games - 20 More Games -->
+    <div class="row">
+        <!-- 1. Hayvonlarni Himoya Qilish -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🦁</span>
+                    <h5 class="card-title fw-bold text-danger">Hayvonlarni Himoya Qilish</h5>
+                    <p class="card-text">
+                        Yo'qolib ketayotgan hayvonlarni himoya qiling va ularning yashash joylarini asrang.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 4 bosqich</span>
+                        <span class="badge badge-eco me-2">🐾 Himoya o'yini</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +35 coin</span> |
+                            <span class="energy-cost">⚡️ -18 energiya</span>
+                        </small>
+                    </div>
+                    <a href="{{ url_for('hayvonlar_himoya') }}" class="btn btn-danger btn-lg w-100">
+                        <i class="fas fa-play me-2"></i>O'ynash
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Iqlim O'zgarishi Jasorati -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🌡️</span>
+                    <h5 class="card-title fw-bold text-danger">Iqlim O'zgarishi Jasorati</h5>
+                    <p class="card-text">
+                        Global isishga qarshi kurashing va yer sayyorasini sovutish choralarini ko'ring.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 6 vazifa</span>
+                        <span class="badge badge-eco me-2">🌍 Strategiya</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +40 coin</span> |
+                            <span class="energy-cost">⚡️ -25 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn btn-danger w-100" onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Okean Tozalash -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🌊</span>
+                    <h5 class="card-title fw-bold text-primary">Okean Tozalash</h5>
+                    <p class="card-text">
+                        Dengiz va okeandagi plastikni yig'ing, dengiz hayotini qutqaring!
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 5 daraja</span>
+                        <span class="badge badge-eco me-2">🐟 Tezkorlik</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +28 coin</span> |
+                            <span class="energy-cost">⚡️ -16 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 4. O'rmon Muhofizchisi -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🌲</span>
+                    <h5 class="card-title fw-bold text-success">O'rmon Muhofizchisi</h5>
+                    <p class="card-text">
+                        O'rmonlarni yong'in va kesuvchilardan himoya qiling, yangi daraxtlar eking.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 7 missiya</span>
+                        <span class="badge badge-eco me-2">🔥 Mudofaa</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +32 coin</span> |
+                            <span class="energy-cost">⚡️ -20 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn btn-success w-100" onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Ekologik Shahar Qurish -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🏙️</span>
+                    <h5 class="card-title fw-bold text-info">Ekologik Shahar Qurish</h5>
+                    <p class="card-text">
+                        Yashil shahar yarating: park, velosiped yo'llari va qayta ishlov fabrikalarini quring.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 Ochiq dunyo</span>
+                        <span class="badge badge-eco me-2">🏗️ Qurilish</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +45 coin</span> |
+                            <span class="energy-cost">⚡️ -30 energiya</span>
+                        </small>
+                    </div>
+                    <a href="{{ url_for('ekologik_shahar') }}" class="btn btn-info btn-lg w-100">
+                        <i class="fas fa-play me-2"></i>O'ynash
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Biodiversitet Sarguzashti -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🦋</span>
+                    <h5 class="card-title fw-bold" style="color: #9c27b0;">Biodiversitet Sarguzashti</h5>
+                    <p class="card-text">
+                        Turli xil hayvon va o'simliklarni topib, ularni muhofaza qiling.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 10 tur</span>
+                        <span class="badge badge-eco me-2">🔍 Kashfiyot</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +26 coin</span> |
+                            <span class="energy-cost">⚡️ -14 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn w-100" style="background: #9c27b0; color: white;"
+                        onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 7. Kompost Ustasi -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🍂</span>
+                    <h5 class="card-title fw-bold" style="color: #795548;">Kompost Ustasi</h5>
+                    <p class="card-text">
+                        Organik chiqindilardan kompost yasab, o'simliklarni oziqlantirishni o'rganing.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 4 resept</span>
+                        <span class="badge badge-eco me-2">🌱 Ishlab chiqarish</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +22 coin</span> |
+                            <span class="energy-cost">⚡️ -12 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn w-100" style="background: #795548; color: white;"
+                        onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Solar Energiya Ferma -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">☀️</span>
+                    <h5 class="card-title fw-bold text-warning">Solar Energiya Ferma</h5>
+                    <p class="card-text">
+                        Quyosh panellarini qo'ying va toza energiya ishlab chiqarishni boshqaring.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 5 daraja</span>
+                        <span class="badge badge-eco me-2">⚡ Energiya</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +38 coin</span> |
+                            <span class="energy-cost">⚡️ -22 energiya</span>
+                        </small>
+                    </div>
+                    <a href="{{ url_for('solar_energiya') }}" class="btn btn-warning btn-lg w-100">
+                        <i class="fas fa-play me-2"></i>O'ynash
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. Karbon Izini Kamaytirish -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">👣</span>
+                    <h5 class="card-title fw-bold" style="color: #607d8b;">Karbon Izini Kamaytirish</h5>
+                    <p class="card-text">
+                        Kundalik hayotda karbon chiqindilarini kamaytirish usullarini o'rganing.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 8 vazifa</span>
+                        <span class="badge badge-eco me-2">📊 Statistika</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +24 coin</span> |
+                            <span class="energy-cost">⚡️ -15 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn w-100" style="background: #607d8b; color: white;"
+                        onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 10. Havo Sifati Monitor -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🌫️</span>
+                    <h5 class="card-title fw-bold" style="color: #9e9e9e;">Havo Sifati Monitor</h5>
+                    <p class="card-text">
+                        Havo ifloslanishini aniqlang va tozalash choralari ko'ring.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 6 hudud</span>
+                        <span class="badge badge-eco me-2">🔬 Monitoring</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +27 coin</span> |
+                            <span class="energy-cost">⚡️ -17 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn w-100" style="background: #9e9e9e; color: white;"
+                        onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 11. Ekologik Bog'bon -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🌻</span>
+                    <h5 class="card-title fw-bold" style="color: #ff9800;">Ekologik Bog'bon</h5>
+                    <p class="card-text">
+                        Organik bоg' yarating, begona o'tlar va zararkunandalarni boshqaring.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 12 o'simlik</span>
+                        <span class="badge badge-eco me-2">🌿 Parvarish</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +29 coin</span> |
+                            <span class="energy-cost">⚡️ -19 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn w-100" style="background: #ff9800; color: white;"
+                        onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 12. Asalari Qutqarish -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🐝</span>
+                    <h5 class="card-title fw-bold" style="color: #ffc107;">Asalari Qutqarish</h5>
+                    <p class="card-text">
+                        Asalarini himoya qiling va ularning gullarni changlatish vazifasini tushuning.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 5 uyum</span>
+                        <span class="badge badge-eco me-2">🌺 Ekosistema</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +31 coin</span> |
+                            <span class="energy-cost">⚡️ -21 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn w-100" style="background: #ffc107; color: white;"
+                        onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 13. Dengiz Korallari Tiklanishi -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🪸</span>
+                    <h5 class="card-title fw-bold" style="color: #ff5722;">Dengiz Korallari Tiklanishi</h5>
+                    <p class="card-text">
+                        Korall riflarini qayta tiklang va dengiz ekosistemalarini asrang.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 4 rif</span>
+                        <span class="badge badge-eco me-2">🐠 Tiklanish</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +33 coin</span> |
+                            <span class="energy-cost">⚡️ -23 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn w-100" style="background: #ff5722; color: white;"
+                        onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!--14. Plastikdan Qochish -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🚫</span>
+                    <h5 class="card-title fw-bold text-danger">Plastikdan Qochish</h5>
+                    <p class="card-text">
+                        Kundalik hayotda plastik qo'llanishini kamaytirish yo'llarini toping.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 7 kun</span>
+                        <span class="badge badge-eco me-2">♻️ Muqobil</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +21 coin</span> |
+                            <span class="energy-cost">⚡️ -11 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn btn-danger w-100" onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 15. Shamol Energiyasi Qo'rg'on -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🌪️</span>
+                    <h5 class="card-title fw-bold" style="color: #00bcd4;">Shamol Energiyasi Qo'rg'on</h5>
+                    <p class="card-text">
+                        Shamol turbinalarini o'rnating va qayta tiklanuvchi energiya ishlab chiqaring.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 6 qo'rg'on</span>
+                        <span class="badge badge-eco me-2">💨 Turbina</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +36 coin</span> |
+                            <span class="energy-cost">⚡️ -24 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn w-100" style="background: #00bcd4; color: white;"
+                        onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 16. Tropik O'rmonlarni Asrash -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🦜</span>
+                    <h5 class="card-title fw-bold text-success">Tropik O'rmonlarni Asrash</h5>
+                    <p class="card-text">
+                        Amazonika va boshqa tropik o'rmonlarni yo'q bo'lishdan saqlang.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 5 o'rmon</span>
+                        <span class="badge badge-eco me-2">🌴 Muhofaza</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +42 coin</span> |
+                            <span class="energy-cost">⚡️ -28 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn btn-success w-100" onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 17. Suv Zaxiralarini Boshqarish -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">💦</span>
+                    <h5 class="card-title fw-bold text-primary">Suv Zaxiralarini Boshqarish</h5>
+                    <p class="card-text">
+                        Suv manbaalarini himoya qiling va toza suv yetkazib berish tizimini yarating.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 8 manba</span>
+                        <span class="badge badge-eco me-2">💧 Boshqarish</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +30 coin</span> |
+                            <span class="energy-cost">⚡️ -20 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 18. Elektromobilga O'tish -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">🚗</span>
+                    <h5 class="card-title fw-bold" style="color: #4caf50;">Elektromobilga O'tish</h5>
+                    <p class="card-text">
+                        Transport tizimini ekologik transport vositalariga o'zgartiring.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 4 shahar</span>
+                        <span class="badge badge-eco me-2">🔌 Transport</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +34 coin</span> |
+                            <span class="energy-cost">⚡️ -22 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn w-100" style="background: #4caf50; color: white;"
+                        onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 19. Ekologik Tadbirkor -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">💼</span>
+                    <h5 class="card-title fw-bold" style="color: #3f51b5;">Ekologik Tadbirkor</h5>
+                    <p class="card-text">
+                        O'z ekologik biznesingizni boshlang va barqaror mahsulotlar ishlab chiqaring.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 Ochiq dunyo</span>
+                        <span class="badge badge-eco me-2">💡 Biznes</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +50 coin</span> |
+                            <span class="energy-cost">⚡️ -35 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn w-100" style="background: #3f51b5; color: white;"
+                        onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 20. Tabiat Fotografchisi -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card game-card h-100">
+                <div class="card-body text-center p-4">
+                    <span class="game-icon">📸</span>
+                    <h5 class="card-title fw-bold" style="color: #e91e63;">Tabiat Fotografchisi</h5>
+                    <p class="card-text">
+                        Go'zal tabiat manzaralarini suratga oling va ekologik xabardorlikni oshiring.
+                    </p>
+                    <div class="game-details mb-3">
+                        <span class="badge badge-eco me-2">🎯 15 joy</span>
+                        <span class="badge badge-eco me-2">📷 Ijod</span>
+                    </div>
+                    <div class="game-costs mb-3">
+                        <small class="d-block">
+                            <span class="reward-coins">💰 +25 coin</span> |
+                            <span class="energy-cost">⚡️ -13 energiya</span>
+                        </small>
+                    </div>
+                    <button class="btn w-100" style="background: #e91e63; color: white;"
+                        onclick="alert('Bu o\'yin hali ishlab chiqilmoqda!')">
+                        <i class="fas fa-play me-2"></i>Tez kunda!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Game Instructions -->
     <div class="row mt-5">
         <div class="col-12">
@@ -293,7 +840,7 @@ block content %}
         // Energiya tekshirish
         function checkEnergyForGame(gameEnergyCost) {
             if (userEnergy < gameEnergyCost) {
-                alert(`Energiya yetarli emas! Sizda ${ userEnergy } energiya bor, kerak: ${ gameEnergyCost }`);
+                alert(`Energiya yetarli emas! Sizda ${userEnergy} energiya bor, kerak: ${gameEnergyCost}`);
                 return false;
             }
             return true;

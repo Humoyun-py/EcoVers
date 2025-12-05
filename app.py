@@ -1816,6 +1816,422 @@ def eco_puzzle():
         flash('O\'yin yuklanmadi!', 'error')
         return redirect(url_for('games'))
 
+# ============================================================
+# 20 TA YANGI O'YIN ROUTE'LARI
+# ============================================================
+# Bu kodni app.py faylining 1818-qatoridan keyin qo'shing
+# (eco_puzzle route'dan keyin, complete_game route'dan oldin)
+# ============================================================
+
+# 1. Hayvonlarni Himoya Qilish
+@app.route('/hayvonlar_himoya')
+@login_required
+def hayvonlar_himoya():
+    """Hayvonlarni Himoya Qilish o'yini"""
+    try:
+        energy_cost = 18
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('hayvonlar_himoya.html', user=current_user)
+    except Exception as e:
+        print(f"Hayvonlar himoya game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 2. Iqlim O'zgarishi Jasorati
+@app.route('/iqlim_ozgarishi')
+@login_required
+def iqlim_ozgarishi():
+    """Iqlim O'zgarishi Jasorati o'yini"""
+    try:
+        energy_cost = 25
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('iqlim_ozgarishi.html', user=current_user)
+    except Exception as e:
+        print(f"Iqlim ozgarishi game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 3. Okean Tozalash
+@app.route('/okean_tozalash')
+@login_required
+def okean_tozalash():
+    """Okean Tozalash o'yini"""
+    try:
+        energy_cost = 16
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('okean_tozalash.html', user=current_user)
+    except Exception as e:
+        print(f"Okean tozalash game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 4. O'rmon Muhofizchisi
+@app.route('/ormon_muhofizchisi')
+@login_required
+def ormon_muhofizchisi():
+    """O'rmon Muhofizchisi o'yini"""
+    try:
+        energy_cost = 20
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('ormon_muhofizchisi.html', user=current_user)
+    except Exception as e:
+        print(f"O'rmon muhofizchisi game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 5. Ekologik Shahar Qurish
+@app.route('/ekologik_shahar')
+@login_required
+def ekologik_shahar():
+    """Ekologik Shahar Qurish o'yini"""
+    try:
+        energy_cost = 30
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('ekologik_shahar.html', user=current_user)
+    except Exception as e:
+        print(f"Ekologik shahar game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 6. Biodiversitet Sarguzashti
+@app.route('/biodiversitet')
+@login_required
+def biodiversitet():
+    """Biodiversitet Sarguzashti o'yini"""
+    try:
+        energy_cost = 14
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('biodiversitet.html', user=current_user)
+    except Exception as e:
+        print(f"Biodiversitet game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 7. Kompost Ustasi
+@app.route('/kompost_ustasi')
+@login_required
+def kompost_ustasi():
+    """Kompost Ustasi o'yini"""
+    try:
+        energy_cost = 12
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('kompost_ustasi.html', user=current_user)
+    except Exception as e:
+        print(f"Kompost ustasi game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 8. Solar Energiya Ferma
+@app.route('/solar_energiya')
+@login_required
+def solar_energiya():
+    """Solar Energiya Ferma o'yini"""
+    try:
+        energy_cost = 22
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('solar_energiya.html', user=current_user)
+    except Exception as e:
+        print(f"Solar energiya game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 9. Karbon Izini Kamaytirish
+@app.route('/karbon_kamaytirish')
+@login_required
+def karbon_kamaytirish():
+    """Karbon Izini Kamaytirish o'yini"""
+    try:
+        energy_cost = 15
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('karbon_kamaytirish.html', user=current_user)
+    except Exception as e:
+        print(f"Karbon kamaytirish game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 10. Havo Sifati Monitor
+@app.route('/havo_sifati')
+@login_required
+def havo_sifati():
+    """Havo Sifati Monitor o'yini"""
+    try:
+        energy_cost = 17
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('havo_sifati.html', user=current_user)
+    except Exception as e:
+        print(f"Havo sifati game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 11. Ekologik Bog'bon
+@app.route('/ekologik_bogbon')
+@login_required
+def ekologik_bogbon():
+    """Ekologik Bog'bon o'yini"""
+    try:
+        energy_cost = 19
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('ekologik_bogbon.html', user=current_user)
+    except Exception as e:
+        print(f"Ekologik bogbon game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 12. Asalari Qutqarish
+@app.route('/asalari_qutqarish')
+@login_required
+def asalari_qutqarish():
+    """Asalari Qutqarish o'yini"""
+    try:
+        energy_cost = 21
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('asalari_qutqarish.html', user=current_user)
+    except Exception as e:
+        print(f"Asalari qutqarish game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 13. Dengiz Korallari Tiklanishi
+@app.route('/korall_tiklanishi')
+@login_required
+def korall_tiklanishi():
+    """Dengiz Korallari Tiklanishi o'yini"""
+    try:
+        energy_cost = 23
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('korall_tiklanishi.html', user=current_user)
+    except Exception as e:
+        print(f"Korall tiklanishi game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 14. Plastikdan Qochish
+@app.route('/plastikdan_qochish')
+@login_required
+def plastikdan_qochish():
+    """Plastikdan Qochish o'yini"""
+    try:
+        energy_cost = 11
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('plastikdan_qochish.html', user=current_user)
+    except Exception as e:
+        print(f"Plastikdan qochish game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 15. Shamol Energiyasi Qo'rg'on
+@app.route('/shamol_energiyasi')
+@login_required
+def shamol_energiyasi():
+    """Shamol Energiyasi Qo'rg'on o'yini"""
+    try:
+        energy_cost = 24
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('shamol_energiyasi.html', user=current_user)
+    except Exception as e:
+        print(f"Shamol energiyasi game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 16. Tropik O'rmonlarni Asrash
+@app.route('/tropik_ormonlar')
+@login_required
+def tropik_ormonlar():
+    """Tropik O'rmonlarni Asrash o'yini"""
+    try:
+        energy_cost = 28
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('tropik_ormonlar.html', user=current_user)
+    except Exception as e:
+        print(f"Tropik ormonlar game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 17. Suv Zaxiralarini Boshqarish
+@app.route('/suv_boshqarish')
+@login_required
+def suv_boshqarish():
+    """Suv Zaxiralarini Boshqarish o'yini"""
+    try:
+        energy_cost = 20
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('suv_boshqarish.html', user=current_user)
+    except Exception as e:
+        print(f"Suv boshqarish game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 18. Elektromobilga O'tish
+@app.route('/elektromobil')
+@login_required
+def elektromobil():
+    """Elektromobilga O'tish o'yini"""
+    try:
+        energy_cost = 22
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('elektromobil.html', user=current_user)
+    except Exception as e:
+        print(f"Elektromobil game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 19. Ekologik Tadbirkor
+@app.route('/ekologik_tadbirkor')
+@login_required
+def ekologik_tadbirkor():
+    """Ekologik Tadbirkor o'yini"""
+    try:
+        energy_cost = 35
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('ekologik_tadbirkor.html', user=current_user)
+    except Exception as e:
+        print(f"Ekologik tadbirkor game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# 20. Tabiat Fotografchisi
+@app.route('/tabiat_fotografchisi')
+@login_required
+def tabiat_fotografchisi():
+    """Tabiat Fotografchisi o'yini"""
+    try:
+        energy_cost = 13
+        if current_user.energy < energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {energy_cost}', 'error')
+            return redirect(url_for('games'))
+        
+        current_user.energy -= energy_cost
+        db.session.commit()
+        
+        return render_template('tabiat_fotografchisi.html', user=current_user)
+    except Exception as e:
+        print(f"Tabiat fotografchisi game route xatosi: {str(e)}")
+        flash('O\'yin yuklanmadi!', 'error')
+        return redirect(url_for('games'))
+
+# ============================================================
+# QANDAY QO'SHISH:
+# 1. app.py faylini oching
+# 2. 1818-qatorni toping (eco_puzzle rout'idan keyin)
+# 3. Yuqoridagi barcha kodni ko'chiring va qo'shing
+# 4. Faylni saqlang
+# ============================================================
+
+
 # O'yin natijalarini saqlash API'lari
 @app.route('/game/complete', methods=['POST'])
 @login_required
