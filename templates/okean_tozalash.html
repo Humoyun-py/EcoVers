@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌊 Okean Tozalash - EcoTrack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0066cc 0%, #00ccff 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .game-title {
+            font-size: 32px;
+            color: #0066cc;
+            flex: 1;
+            text-align: center;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .ocean-area {
+            background: linear-gradient(to bottom, #87CEEB 0%, #4682B4 100%);
+            padding: 40px;
+            border-radius: 15px;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trash-item {
+            position: absolute;
+            font-size: 50px;
+            cursor: pointer;
+            animation: float 3s ease-in-out infinite;
+            transition: all 0.3s;
+        }
+
+        .trash-item:hover {
+            transform: scale(1.2);
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0066cc;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .finish-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .modal-reward {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 28px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .modal-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <button class="back-btn" onclick="goBack()">⬅ Orqaga</button>
+            <h1 class="game-title">🌊 Okean Tozalash</h1>
+            <div class="score-display">⭐ <span id="score">0</span></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="collected">0</div>
+                <div class="stat-label">Yig'ilgan Axlat</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="remaining">15</div>
+                <div class="stat-label">Qolgan Axlat</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value"><span id="timer">60</span>s</div>
+                <div class="stat-label">Qolgan Vaqt</div>
+            </div>
+        </div>
+
+        <div class="ocean-area" id="oceanArea"></div>
+
+        <button class="finish-btn" onclick="finishGame()">🏆 O'yinni Tugatish</button>
+    </div>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">🎉</div>
+            <h2 style="font-size: 32px; color: #0066cc; margin-bottom: 15px;">Ajoyib Ish!</h2>
+            <p style="font-size: 24px; margin: 20px 0;">Yig'ilgan: <strong id="finalCollected">0</strong> ta</p>
+            <div class="modal-reward">🪙 +<span id="coinsEarned">0</span> Coin!</div>
+            <button class="modal-btn" onclick="returnToDashboard()">Dashboard'ga Qaytish</button>
+        </div>
+    </div>
+
+    <script>
+        const trashItems = ['🍾', '🥤', '🛢️', '🎣', '🧃', '🥫', '🧴', '🏺'];
+        let score = 0;
+        let collected = 0;
+        let timeLeft = 60;
+        let gameActive = true;
+        let timerInterval;
+
+        function initGame() {
+            const ocean = document.getElementById('oceanArea');
+            for (let i = 0; i < 15; i++) {
+                const trash = document.createElement('div');
+                trash.className = 'trash-item';
+                trash.textContent = trashItems[Math.floor(Math.random() * trashItems.length)];
+                trash.style.left = Math.random() * 80 + '%';
+                trash.style.top = Math.random() * 80 + '%';
+                trash.onclick = () => collectTrash(trash);
+                ocean.appendChild(trash);
+            }
+
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0 && gameActive) {
+                    timeLeft--;
+                    document.getElementById('timer').textContent = timeLeft;
+                    if (timeLeft === 0) {
+                        finishGame();
+                    }
+                }
+            }, 1000);
+        }
+
+        function collectTrash(element) {
+            if (!gameActive) return;
+            score += 10;
+            collected++;
+            element.remove();
+
+            document.getElementById('score').textContent = score;
+            document.getElementById('collected').textContent = collected;
+            document.getElementById('remaining').textContent = 15 - collected;
+
+            if (collected >= 15) {
+                setTimeout(() => finishGame(), 500);
+            }
+        }
+
+        async function finishGame() {
+            gameActive = false;
+            clearInterval(timerInterval);
+
+            const coins = Math.floor(score / 3) + 15;
+            document.getElementById('finalCollected').textContent = collected;
+            document.getElementById('coinsEarned').textContent = coins;
+            document.getElementById('resultModal').style.display = 'block';
+
+            try {
+                await fetch('/game/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        game_type: 'okean_tozalash',
+                        score: score,
+                        coins_earned: coins
+                    })
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function returnToDashboard() {
+            window.location.href = '/dashboard';
+        }
+
+        function goBack() {
+            if (confirm('O\'yindan chiqmoqchimisiz?')) {
+                clearInterval(timerInterval);
+                window.location.href = '/games';
+            }
+        }
+
+        initGame();
+    </script>
+</body>
+
+</html>

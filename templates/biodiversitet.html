@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌿 Biodiversitet - EcoTrack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-title {
+            font-size: 32px;
+            color: #11998e;
+            flex: 1;
+            text-align: center;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .game-info {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .game-area {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            min-height: 400px;
+        }
+
+        .species-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .species-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 3px solid transparent;
+        }
+
+        .species-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border-color: #11998e;
+        }
+
+        .species-card.protected {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .species-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .species-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .finish-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .finish-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 32px;
+            color: #11998e;
+            margin-bottom: 15px;
+        }
+
+        .modal-reward {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 28px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .modal-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 20px;
+            }
+
+            .game-title {
+                font-size: 24px;
+            }
+
+            .species-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <button class="back-btn" onclick="goBack()">⬅ Orqaga</button>
+            <h1 class="game-title">🌿 Biodiversitet</h1>
+            <div class="score-display">⭐ Ball: <span id="score">0</span></div>
+        </div>
+
+        <div class="game-info">
+            <h3>O'yin Haqida</h3>
+            <p>Turli xil jonzotlarni toping va biologik xilma-xillikni saqlang! Har bir turni himoya qiling.</p>
+        </div>
+
+        <div class="game-area">
+            <h3 style="text-align: center; color: #333; margin-bottom: 20px;">Turlarni Himoya Qiling</h3>
+            <div class="species-grid" id="speciesGrid"></div>
+        </div>
+
+        <button class="finish-btn" onclick="finishGame()">🏆 O'yinni Yakunlash</button>
+    </div>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">🎉</div>
+            <h2 class="modal-title">Tabriklaymiz!</h2>
+            <p style="font-size: 24px; color: #333; margin: 20px 0;">Ball: <strong id="finalScore">0</strong></p>
+            <p style="font-size: 20px; margin: 10px 0;">Himoyalandi: <strong id="protectedCount">0</strong> ta tur</p>
+            <div class="modal-reward">🪙 +<span id="coinsEarned">0</span> Coin!</div>
+            <button class="modal-btn" onclick="window.location.href='/dashboard'">Dashboard'ga Qaytish</button>
+        </div>
+    </div>
+
+    <script>
+        const species = [
+            { icon: '🦋', name: 'Kapalak', rare: true },
+            { icon: '🐝', name: 'Ari', rare: false },
+            { icon: '🦅', name: 'Burgut', rare: true },
+            { icon: '🐸', name: 'Qurbaqa', rare: false },
+            { icon: '🦎', name: 'Kaltakesak', rare: true },
+            { icon: '🐛', name: 'Qurt', rare: false },
+            { icon: '🦗', name: 'Chigirtka', rare: false },
+            { icon: '🐞', name: 'Qo\'ng\'iz', rare: false },
+            { icon: '🦜', name: 'To\'ti', rare: true },
+            { icon: '🐢', name: 'Toshbaqa', rare: true },
+            { icon: '🦔', name: 'Kirpi', rare: true },
+            { icon: '🦎', name: 'Kaltakesak', rare: false }
+        ];
+
+        let score = 0;
+        let protected = 0;
+
+        function initGame() {
+            const grid = document.getElementById('speciesGrid');
+            species.forEach((sp, index) => {
+                const card = document.createElement('div');
+                card.className = 'species-card';
+                card.innerHTML = `
+                    <div class="species-icon">${sp.icon}</div>
+                    <div class="species-name">${sp.name}</div>
+                    <div style="font-size: 12px; color: #666;">${sp.rare ? '⭐ Noyob' : '✓ Oddiy'}</div>
+                `;
+                card.onclick = () => protectSpecies(index, card, sp);
+                grid.appendChild(card);
+            });
+        }
+
+        function protectSpecies(index, card, sp) {
+            if (card.classList.contains('protected')) return;
+
+            const points = sp.rare ? 15 : 10;
+            score += points;
+            protected++;
+
+            card.classList.add('protected');
+            card.innerHTML = `
+                <div class="species-icon">${sp.icon}</div>
+                <div class="species-name">${sp.name}</div>
+                <div style="font-size: 14px;">✅ Himoyalandi!</div>
+            `;
+
+            document.getElementById('score').textContent = score;
+        }
+
+        async function finishGame() {
+            const coins = Math.floor(score / 2) + 20;
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('protectedCount').textContent = protected;
+            document.getElementById('coinsEarned').textContent = coins;
+            document.getElementById('resultModal').style.display = 'block';
+
+            try {
+                await fetch('/game/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        game_type: 'biodiversitet',
+                        score: score,
+                        coins_earned: coins
+                    })
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function goBack() {
+            if (confirm('O\'yindan chiqmoqchimisiz?')) window.location.href = '/games';
+        }
+
+        initGame();
+    </script>
+</body>
+
+</html>

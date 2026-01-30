@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌡️ Iqlim O'zgarishi Jasorati - EcoTrack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .game-title {
+            font-size: 32px;
+            color: #ff6b6b;
+            flex: 1;
+            text-align: center;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .game-info {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .game-area {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            min-height: 400px;
+        }
+
+        .climate-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: white;
+            border: 3px solid #4ecdc4;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            background: #4ecdc4;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .action-btn.used {
+            background: #ccc;
+            border-color: #999;
+            cursor: not-allowed;
+        }
+
+        .action-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .action-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .action-effect {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .finish-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 32px;
+            color: #ff6b6b;
+            margin-bottom: 15px;
+        }
+
+        .modal-reward {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 28px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .modal-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 24px;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <button class="back-btn" onclick="goBack()">⬅ Orqaga</button>
+            <h1 class="game-title">🌡️ Iqlim O'zgarishi Jasorati</h1>
+            <div class="score-display">⭐ Ball: <span id="score">0</span></div>
+        </div>
+
+        <div class="game-info">
+            <h3>O'yin Haqida</h3>
+            <p>Iqlim o'zgarishiga qarshi kurashing! To'g'ri harakatlarni tanlab, haroratni pasaytiring va ekologiyani
+                saqlang.</p>
+        </div>
+
+        <div class="game-area">
+            <div class="climate-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">🌡️</div>
+                    <div class="stat-value" id="temperature">+2.5°C</div>
+                    <div class="stat-label">Global Harorat</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🌍</div>
+                    <div class="stat-value" id="co2">410ppm</div>
+                    <div class="stat-label">CO₂ Darajasi</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🌳</div>
+                    <div class="stat-value" id="trees">0</div>
+                    <div class="stat-label">Ekilgan Daraxtlar</div>
+                </div>
+            </div>
+
+            <h3 style="text-align: center; color: #333; margin-bottom: 20px;">Harakatni Tanlang</h3>
+            <div class="actions-grid" id="actionsGrid"></div>
+
+            <button class="finish-btn" onclick="finishGame()">🏆 O'yinni Yakunlash</button>
+        </div>
+    </div>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">🎉</div>
+            <h2 class="modal-title">Tabriklaymiz!</h2>
+            <p style="font-size: 24px; color: #333; margin: 20px 0;">Ball: <strong id="finalScore">0</strong></p>
+            <div class="modal-reward">🪙 +<span id="coinsEarned">0</span> Coin!</div>
+            <button class="modal-btn" onclick="returnToDashboard()">Dashboard'ga Qaytish</button>
+        </div>
+    </div>
+
+    <script>
+        const actions = [
+            { icon: '☀️', name: 'Quyosh panellari', effect: 'CO₂ -15ppm', value: 15, temp: -0.2 },
+            { icon: '🌲', name: 'Daraxt ekish', effect: 'Harorat -0.1°C', value: 10, temp: -0.1, trees: 100 },
+            { icon: '🚴', name: 'Velosiped haydash', effect: 'CO₂ -10ppm', value: 8, temp: -0.1 },
+            { icon: '♻️', name: 'Qayta ishlash', effect: 'CO₂ -12ppm', value: 12, temp: -0.15 },
+            { icon: '💡', name: 'Energiya tejash', effect: 'CO₂ -8ppm', value: 8, temp: -0.1 },
+            { icon: '💧', name: 'Suv tejash', effect: 'Resurslar +5%', value: 6, temp: -0.05 }
+        ];
+
+        let score = 0;
+        let temperature = 2.5;
+        let co2 = 410;
+        let trees = 0;
+        let usedActions = [];
+
+        function initGame() {
+            const grid = document.getElementById('actionsGrid');
+            actions.forEach((action, index) => {
+                const btn = document.createElement('div');
+                btn.className = 'action-btn';
+                btn.innerHTML = `
+                    <div class="action-icon">${action.icon}</div>
+                    <div class="action-name">${action.name}</div>
+                    <div class="action-effect">${action.effect}</div>
+                `;
+                btn.onclick = () => performAction(index, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function performAction(index, btn) {
+            if (usedActions.includes(index)) return;
+
+            const action = actions[index];
+            score += action.value;
+            temperature = Math.max(0, temperature + action.temp);
+            co2 = Math.max(200, co2 - (action.value || 0));
+            if (action.trees) trees += action.trees;
+
+            usedActions.push(index);
+            btn.classList.add('used');
+
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('temperature').textContent = `+${temperature.toFixed(1)}°C`;
+            document.getElementById('co2').textContent = `${Math.round(co2)}ppm`;
+            document.getElementById('trees').textContent = trees;
+        }
+
+        async function finishGame() {
+            const coins = Math.floor(score / 2) + 15;
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('coinsEarned').textContent = coins;
+            document.getElementById('resultModal').style.display = 'block';
+
+            try {
+                await fetch('/game/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        game_type: 'iqlim_ozgarishi',
+                        score: score,
+                        coins_earned: coins
+                    })
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function returnToDashboard() {
+            window.location.href = '/dashboard';
+        }
+
+        function goBack() {
+            if (confirm('O\'yindan chiqmoqchimisiz?')) {
+                window.location.href = '/games';
+            }
+        }
+
+        initGame();
+    </script>
+</body>
+
+</html>

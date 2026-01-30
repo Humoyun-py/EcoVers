@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>☀️ Solar Energiya - EcoTrack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffa726 0%, #ff9800 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .game-title {
+            font-size: 32px;
+            color: #ff9800;
+            flex: 1;
+            text-align: center;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .game-area {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            min-height: 400px;
+        }
+
+        .solar-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .panel-slot {
+            aspect-ratio: 1;
+            background: #e0e0e0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .panel-slot:hover {
+            background: #ffa726;
+            transform: scale(1.1);
+        }
+
+        .panel-slot.active {
+            background: linear-gradient(135deg, #ffa726 0%, #ff9800 100%);
+            animation: glow 1s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px #ffa726;
+            }
+
+            50% {
+                box-shadow: 0 0 40px #ff9800;
+            }
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff9800;
+        }
+
+        .finish-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-reward {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 28px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <button class="back-btn" onclick="goBack()">⬅ Orqaga</button>
+            <h1 class="game-title">☀️ Solar Energiya Ferma</h1>
+            <div class="score-display">⚡ <span id="energy">0</span> kW</div>
+        </div>
+
+        <div class="game-area">
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="panels">0</div>
+                    <div style="font-size: 14px; color: #666;">Panellar</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="efficiency">0%</div>
+                    <div style="font-size: 14px; color: #666;">Samaradorlik</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="score">0</div>
+                    <div style="font-size: 14px; color: #666;">Ball</div>
+                </div>
+            </div>
+
+            <h3 style="text-align: center; margin: 20px 0;">Panel Joylashtirish Uchun Bosing</h3>
+            <div class="solar-grid" id="solarGrid"></div>
+        </div>
+
+        <button class="finish-btn" onclick="finishGame()">🏆 Fermani Yakunlash</button>
+    </div>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <div style="font-size: 80px;">🎉</div>
+            <h2 style="font-size: 32px; color: #ff9800; margin: 15px 0;">Energiya Ishlab Chiqarildi!</h2>
+            <p style="font-size: 24px; margin: 20px 0;">Energiya: <strong id="finalEnergy">0</strong> kW</p>
+            <div class="modal-reward">🪙 +<span id="coinsEarned">0</span> Coin!</div>
+            <button
+                style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%); color: white; border: none; padding: 15px 40px; border-radius: 25px; font-size: 18px; cursor: pointer;"
+                onclick="window.location.href='/dashboard'">Dashboard'ga Qaytish</button>
+        </div>
+    </div>
+
+    <script>
+        const gridSize = 25;
+        let panelCount = 0;
+        let totalEnergy = 0;
+        let score = 0;
+
+        function initGame() {
+            const grid = document.getElementById('solarGrid');
+            for (let i = 0; i < gridSize; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'panel-slot';
+                slot.textContent = '➕';
+                slot.onclick = () => placePanel(slot);
+                grid.appendChild(slot);
+            }
+        }
+
+        function placePanel(slot) {
+            if (slot.classList.contains('active')) return;
+
+            slot.classList.add('active');
+            slot.textContent = '☀️';
+            panelCount++;
+
+            const energyPerPanel = Math.floor(Math.random() * 5) + 3;
+            totalEnergy += energyPerPanel;
+            score += energyPerPanel * 2;
+
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('panels').textContent = panelCount;
+            document.getElementById('energy').textContent = totalEnergy;
+            document.getElementById('efficiency').textContent = Math.min(100, Math.floor((panelCount / gridSize) * 100));
+            document.getElementById('score').textContent = score;
+        }
+
+        async function finishGame() {
+            const coins = score + 20;
+            document.getElementById('finalEnergy').textContent = totalEnergy;
+            document.getElementById('coinsEarned').textContent = coins;
+            document.getElementById('resultModal').style.display = 'block';
+
+            try {
+                await fetch('/game/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        game_type: 'solar_energiya',
+                        score: score,
+                        coins_earned: coins
+                    })
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function goBack() {
+            if (confirm('O\'yindan chiqmoqchimisiz?')) window.location.href = '/games';
+        }
+
+        initGame();
+    </script>
+</body>
+
+</html>

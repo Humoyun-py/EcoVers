@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍂 Kompost Ustasi - EcoTrack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #795548 0%, #a1887f 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .game-title {
+            font-size: 32px;
+            color: #795548;
+            flex: 1;
+            text-align: center;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .game-area {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            min-height: 400px;
+        }
+
+        .ingredients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .ingredient-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .ingredient-card:hover {
+            transform: scale(1.1);
+            border-color: #795548;
+        }
+
+        .ingredient-card.selected {
+            background: #8bc34a;
+            color: white;
+        }
+
+        .compost-bin {
+            background: linear-gradient(135deg, #795548 0%, #5d4037 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            min-height: 150px;
+            color: white;
+            text-align: center;
+        }
+
+        .finish-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-reward {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 28px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <button class="back-btn" onclick="goBack()">⬅ Orqaga</button>
+            <h1 class="game-title">🍂 Kompost Ustasi</h1>
+            <div class="score-display">⭐ <span id="score">0</span></div>
+        </div>
+
+        <div class="game-area">
+            <h3 style="text-align: center; margin-bottom: 20px;">Organik Chiqindilarni Tanlang</h3>
+            <div class="ingredients-grid" id="ingredientsGrid"></div>
+
+            <div class="compost-bin">
+                <h4>🪣 Kompost Qutisi</h4>
+                <p id="binContent">0 ta mahsulot qo'shildi</p>
+            </div>
+        </div>
+
+        <button class="finish-btn" onclick="finishGame()">🏆 Kompostni Tayyorlash</button>
+    </div>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <div style="font-size: 80px;">🎉</div>
+            <h2 style="font-size: 32px; color: #795548; margin: 15px 0;">Ajoyib Kompost!</h2>
+            <p style="font-size: 24px; margin: 20px 0;">Ball: <strong id="finalScore">0</strong></p>
+            <div class="modal-reward">🪙 +<span id="coinsEarned">0</span> Coin!</div>
+            <button
+                style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%); color: white; border: none; padding: 15px 40px; border-radius: 25px; font-size: 18px; cursor: pointer;"
+                onclick="window.location.href='/dashboard'">Dashboard'ga Qaytish</button>
+        </div>
+    </div>
+
+    <script>
+        const items = [
+            { icon: '🍎', name: 'Olma qoldig\'i', organic: true },
+            { icon: '🍌', name: 'Banan po\'stlog\'i', organic: true },
+            { icon: '🥕', name: 'Sabzi qoldig\'i', organic: true },
+            { icon: '☕', name: 'Qahva qoldig\'i', organic: true },
+            { icon: '🍞', name: 'Non qoldig\'i', organic: true },
+            { icon: '🥚', name: 'Tuxum po\'stlog\'i', organic: true },
+            { icon: '🍂', name: 'Quruq barglar', organic: true },
+            { icon: '🌿', name: 'O\'simlik qoldig\'i', organic: true },
+            { icon: '🥤', name: 'Plastik stakan', organic: false },
+            { icon: '📱', name: 'Telefon', organic: false },
+            { icon: '🔋', name: 'Batareyka', organic: false },
+            { icon: '💉', name: 'Shprits', organic: false }
+        ];
+
+        let score = 0;
+        let selected = 0;
+
+        function initGame() {
+            const grid = document.getElementById('ingredientsGrid');
+            items.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'ingredient-card';
+                card.innerHTML = `
+                    <div style="font-size: 40px;">${item.icon}</div>
+                    <div style="font-size: 14px; margin-top: 5px;">${item.name}</div>
+                `;
+                card.onclick = () => selectItem(index, card, item);
+                grid.appendChild(card);
+            });
+        }
+
+        function selectItem(index, card, item) {
+            if (card.classList.contains('selected')) return;
+
+            if (item.organic) {
+                score += 10;
+                selected++;
+                card.classList.add('selected');
+            } else {
+                score = Math.max(0, score - 5);
+                card.style.background = '#f44336';
+                setTimeout(() => card.style.background = 'white', 500);
+            }
+
+            document.getElementById('score').textContent = score;
+            document.getElementById('binContent').textContent = `${selected} ta organik mahsulot`;
+        }
+
+        async function finishGame() {
+            const coins = Math.floor(score / 2) + 15;
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('coinsEarned').textContent = coins;
+            document.getElementById('resultModal').style.display = 'block';
+
+            try {
+                await fetch('/game/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        game_type: 'kompost_ustasi',
+                        score: score,
+                        coins_earned: coins
+                    })
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function goBack() {
+            if (confirm('O\'yindan chiqmoqchimisiz?')) window.location.href = '/games';
+        }
+
+        initGame();
+    </script>
+</body>
+
+</html>

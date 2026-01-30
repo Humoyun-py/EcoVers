@@ -214,20 +214,20 @@ def create_demo_data():
     ]
     
     demo_items = [
-        Item(name="Yashil Kepka", price=30, item_type="hat", image_path="images/hat_green.png"),
-        Item(name="Ko'k Kepka", price=35, item_type="hat", image_path="images/hat_blue.png"),
-        Item(name="Qizil Kepka", price=40, item_type="hat", image_path="images/hat_red.png"),
-        Item(name="Yashil Futbolka", price=45, item_type="clothes", image_path="images/shirt_green.png"),
-        Item(name="Ko'k Futbolka", price=50, item_type="clothes", image_path="images/shirt_blue.png"),
-        Item(name="Qora Futbolka", price=55, item_type="clothes", image_path="images/shirt_black.png"),
-        Item(name="Krossovka", price=60, item_type="shoes", image_path="images/shoes_sneakers.png"),
-        Item(name="Qizil krossovka", price=65, item_type="shoes", image_path="images/shoes_red.png"),
-        Item(name="Oq Krossovka", price=70, item_type="shoes", image_path="images/shoes_white.png"),    
-        Item(name="Jins Shim", price=70, item_type="clothes", image_path="images/pants_jeans.png"),
-        Item(name="Yashil Shim", price=75, item_type="clothes", image_path="images/pants_green.png"),
-        Item(name="Rukzak", price=80, item_type="accessory", image_path="images/backpack.png"),
-        Item(name="Quyosh ko'zoynak", price=85, item_type="accessory", image_path="images/sunglasses.png"),
-        Item(name="Sport soati", price=90, item_type="accessory", image_path="images/sport_watch.png"),
+        Item(name="Yashil Kepka", price=100, item_type="hat", image_path="images/hat_green.png"),
+        Item(name="Ko'k Kepka", price=140, item_type="hat", image_path="images/hat_blue.png"),
+        Item(name="Qizil Kepka", price=180, item_type="hat", image_path="images/hat_red.png"),
+        Item(name="Yashil Futbolka", price=220, item_type="clothes", image_path="images/shirt_green.png"),
+        Item(name="Ko'k Futbolka", price=260, item_type="clothes", image_path="images/shirt_blue.png"),
+        Item(name="Qora Futbolka", price=300, item_type="clothes", image_path="images/shirt_black.png"),
+        Item(name="Krossovka", price=340, item_type="shoes", image_path="images/shoes_sneakers.png"),
+        Item(name="Qizil krossovka", price=380, item_type="shoes", image_path="images/shoes_red.png"),
+        Item(name="Oq Krossovka", price=420, item_type="shoes", image_path="images/shoes_white.png"),    
+        Item(name="Jins Shim", price=460, item_type="clothes", image_path="images/pants_jeans.png"),
+        Item(name="Yashil Shim", price=500, item_type="clothes", image_path="images/pants_green.png"),
+        Item(name="Rukzak", price=540, item_type="accessory", image_path="images/backpack.png"),
+        Item(name="Quyosh ko'zoynak", price=580, item_type="accessory", image_path="images/sunglasses.png"),
+        Item(name="Sport soati", price=620, item_type="accessory", image_path="images/sport_watch.png"),
     ]
     
     demo_energy_packs = [
@@ -586,9 +586,8 @@ def buy_energy():
         # Coinlarni olib tashlash
         current_user.coins -= price
         
-        # Energiyani qo'shish (maksimum 100)
-        new_energy = min(100, current_user.energy + energy_amount)
-        current_user.energy = new_energy
+        # Energiyani qo'shish
+        current_user.energy += energy_amount
         
         # Notification yaratish
         notification = Notification(
@@ -855,6 +854,119 @@ def ml_quiz():
                          task=task, 
                          difficulty=difficulty)
 
+@app.route('/daily_task_test/<int:task_id>')
+@login_required
+def daily_task_test(task_id):
+    """Kunlik topshiriq testi sahifasi"""
+    try:
+        task = Task.query.get_or_404(task_id)
+        
+        # Energiya tekshirish
+        if current_user.energy < task.energy_cost:
+            flash(f'Energiya yetarli emas! Sizda {current_user.energy} energiya bor, kerak: {task.energy_cost}', 'error')
+            return redirect(url_for('dashboard'))
+        
+        return render_template('daily_task_test.html', user=current_user, task=task)
+    except Exception as e:
+        print(f"Daily task test route xatosi: {str(e)}")
+        flash('Test sahifasi yuklanmadi!', 'error')
+        return redirect(url_for('dashboard'))
+
+@app.route('/api/complete_daily_task_test', methods=['POST'])
+@login_required
+def complete_daily_task_test():
+    """Kunlik topshiriq testini yakunlash va mukofot berish"""
+    try:
+        data = request.get_json()
+        task_id = data.get('task_id')
+        correct_answers = data.get('correct_answers', 0)
+        total_questions = data.get('total_questions', 10)
+        coins_earned = data.get('coins_earned', 0)
+        
+        task = Task.query.get_or_404(task_id)
+        
+        # Energiyani olib tashlash
+        current_user.energy -= task.energy_cost
+        
+        # Coinlarni qo'shish
+        current_user.coins += coins_earned
+        
+        # Tajriba qo'shish
+        exp_gained = coins_earned // 2
+        current_user.experience += exp_gained
+        
+        # Daraja yangilash
+        level_up = check_level_up(current_user)
+        
+        # Topshiriqni bajarilgan deb belgilash
+        user_task = UserTask.query.filter_by(user_id=current_user.id, task_id=task_id).first()
+        if user_task:
+            user_task.completed = True
+            user_task.completed_at = datetime.utcnow()
+        else:
+            new_user_task = UserTask(
+                user_id=current_user.id,
+                task_id=task_id,
+                completed=True,
+                completed_at=datetime.utcnow()
+            )
+            db.session.add(new_user_task)
+        
+        # Quiz natijani saqlash
+        quiz_result = QuizResult(
+            user_id=current_user.id,
+            score=(correct_answers / total_questions) * 100,
+            correct_answers=correct_answers,
+            total_questions=total_questions,
+            coins_earned=coins_earned,
+            task_id=task_id,
+            difficulty=task.difficulty
+        )
+        db.session.add(quiz_result)
+        
+        # Kunlik progressni yangilash
+        today = datetime.utcnow().date()
+        daily_progress = DailyProgress.query.filter_by(user_id=current_user.id, date=today).first()
+        if daily_progress:
+            daily_progress.tasks_completed += 1
+            daily_progress.quizzes_completed += 1
+            daily_progress.coins_earned += coins_earned
+        else:
+            new_progress = DailyProgress(
+                user_id=current_user.id,
+                date=today,
+                tasks_completed=1,
+                quizzes_completed=1,
+                coins_earned=coins_earned
+            )
+            db.session.add(new_progress)
+        
+        # Notification yaratish
+        notification = Notification(
+            user_id=current_user.id,
+            title='✅ Test Muvaffaqiyatli Tugatildi!',
+            message=f'{task.title} testi: {correct_answers}/{total_questions} to\'g\'ri! +{coins_earned} coin',
+            notification_type='quiz',
+            is_read=False
+        )
+        db.session.add(notification)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Test muvaffaqiyatli tugatildi!',
+            'coins_earned': coins_earned,
+            'new_coins': current_user.coins,
+            'new_energy': current_user.energy,
+            'level_up': level_up,
+            'new_level': current_user.level
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)})
+
 @app.route('/ml/get_questions')
 @login_required
 def get_questions():
@@ -871,6 +983,7 @@ def get_questions():
         
         difficulty_filter = request.args.get('difficulty', '').lower()
         task_id = request.args.get('task_id', type=int)
+        count = request.args.get('count', 5, type=int)  # Savollar soni parametri
         user_level = current_user.level
         
         if not difficulty_filter:

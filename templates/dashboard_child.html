@@ -30,7 +30,8 @@
                             {% for news in news_list[:3] %}
                             <div class="carousel-item {% if loop.first %}active{% endif %}">
                                 <h6>{{ news.title }}</h6>
-                                <p class="text-muted">{{ news.content[:100] }}{% if news.content|length > 100 %}...{% endif %}</p>
+                                <p class="text-muted">{{ news.content[:100] }}{% if news.content|length > 100 %}...{%
+                                    endif %}</p>
                                 <small class="text-muted">{{ news.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
                             </div>
                             {% endfor %}
@@ -42,11 +43,13 @@
                             {% endif %}
                         </div>
                         {% if news_list|length > 1 %}
-                        <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+                        <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel"
+                            data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Oldingi</span>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+                        <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel"
+                            data-bs-slide="next">
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Keyingi</span>
                         </button>
@@ -66,14 +69,18 @@
                     <div id="announcements-container">
                         {% if announcements %}
                         {% for announcement in announcements %}
-                        <div class="announcement-item mb-3 p-3 border rounded {% if announcement.announcement_type == 'warning' %}border-warning{% elif announcement.announcement_type == 'success' %}border-success{% else %}border-info{% endif %}">
+                        <div
+                            class="announcement-item mb-3 p-3 border rounded {% if announcement.announcement_type == 'warning' %}border-warning{% elif announcement.announcement_type == 'success' %}border-success{% else %}border-info{% endif %}">
                             <h6 class="mb-2">{{ announcement.title }}</h6>
-                            <p class="text-muted mb-2 small">{{ announcement.content[:80] }}{% if announcement.content|length > 80 %}...{% endif %}</p>
+                            <p class="text-muted mb-2 small">{{ announcement.content[:80] }}{% if
+                                announcement.content|length > 80 %}...{% endif %}</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">
-                                    {{ announcement.start_date.strftime('%d.%m.%Y') }} - {{ announcement.end_date.strftime('%d.%m.%Y') }}
+                                    {{ announcement.start_date.strftime('%d.%m.%Y') }} - {{
+                                    announcement.end_date.strftime('%d.%m.%Y') }}
                                 </small>
-                                <span class="badge bg-{% if announcement.announcement_type == 'warning' %}warning text-dark{% elif announcement.announcement_type == 'success' %}success{% else %}info{% endif %}">
+                                <span
+                                    class="badge bg-{% if announcement.announcement_type == 'warning' %}warning text-dark{% elif announcement.announcement_type == 'success' %}success{% else %}info{% endif %}">
                                     {{ announcement.announcement_type }}
                                 </span>
                             </div>
@@ -172,7 +179,8 @@
                 <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>🎯 Topshiriqlar</h5>
                     <div>
-                        <span class="badge bg-light text-dark me-2" id="completed-tasks">Bajarilgan: {{ completed_task_ids|length }}/{{ all_tasks|length }}</span>
+                        <span class="badge bg-light text-dark me-2" id="completed-tasks">Bajarilgan: {{
+                            completed_task_ids|length }}/{{ all_tasks|length }}</span>
                         <button class="btn btn-sm btn-light" onclick="refreshTasks()">
                             <i class="fas fa-sync-alt"></i>
                         </button>
@@ -186,74 +194,9 @@
                             <span class="badge bg-primary ms-2" id="daily-tasks-badge">Yangi!</span>
                         </h6>
                         {% if todays_tasks and todays_tasks.daily_tasks %}
-                            {% for task in todays_tasks.daily_tasks %}
-                            <div class="card task-card mb-3 eco-card {% if task.id in completed_task_ids %}completed-task{% endif %}">
-                                <div class="card-body">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-8">
-                                            <div class="d-flex align-items-center">
-                                                {% if task.id in completed_task_ids %}
-                                                <span class="badge bg-success me-2"><i class="fas fa-check"></i></span>
-                                                {% endif %}
-                                                <h6 class="task-title mb-0">{{ task.title }}</h6>
-                                                <span class="badge bg-info ms-2">Kunlik</span>
-                                            </div>
-                                            <p class="task-description text-muted mt-2">{{ task.description }}</p>
-                                            <div class="task-meta">
-                                                <span class="badge bg-{% if task.difficulty == 'easy' %}success{% elif task.difficulty == 'medium' %}warning{% else %}danger{% endif %} me-2">
-                                                    {{ task.difficulty }}
-                                                </span>
-                                                <span class="me-3">💰 {{ task.reward_coins }} coin</span>
-                                                <span>⚡ {{ task.energy_cost }} energiya</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 text-end">
-                                            {% if task.id in completed_task_ids %}
-                                            <button class="btn btn-success btn-eco-animated" disabled>
-                                                <i class="fas fa-check me-2"></i>Bajarildi
-                                            </button>
-                                            {% else %}
-                                            {% if task.quiz_required %}
-                                            <a href="{{ url_for('start_task_quiz', task_id=task.id) }}" class="btn btn-primary btn-eco-animated {% if user.energy < task.energy_cost %}disabled{% endif %}" {% if user.energy < task.energy_cost %}title="Energiya yetarli emas" {% endif %}>
-                                                Testni Boshlash
-                                            </a>
-                                            {% else %}
-                                            <button class="btn btn-success btn-eco-animated complete-task" 
-                                                    data-task-id="{{ task.id }}" 
-                                                    data-task-title="{{ task.title }}"
-                                                    data-energy-cost="{{ task.energy_cost }}"
-                                                    data-reward-coins="{{ task.reward_coins }}"
-                                                    {% if user.energy < task.energy_cost %}disabled{% endif %}>
-                                                Bajarish
-                                            </button>
-                                            {% endif %}
-                                            {% endif %}
-
-                                            {% if user.energy < task.energy_cost and task.id not in completed_task_ids %}
-                                            <small class="text-danger mt-2 d-block">
-                                                <i class="fas fa-exclamation-triangle me-1"></i>
-                                                Energiya yetarli emas
-                                            </small>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle me-2"></i>Bugun kunlik topshiriqlar mavjud emas
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Doimiy topshiriqlar -->
-                    <div class="mb-4">
-                        <h6 class="text-success mb-3">
-                            <i class="fas fa-infinity me-2"></i>Doimiy Topshiriqlar
-                        </h6>
-                        {% for task in regular_tasks %}
-                        <div class="card task-card mb-3 eco-card {% if task.id in completed_task_ids %}completed-task{% endif %}">
+                        {% for task in todays_tasks.daily_tasks %}
+                        <div
+                            class="card task-card mb-3 eco-card {% if task.id in completed_task_ids %}completed-task{% endif %}">
                             <div class="card-body">
                                 <div class="row align-items-center">
                                     <div class="col-md-8">
@@ -262,10 +205,12 @@
                                             <span class="badge bg-success me-2"><i class="fas fa-check"></i></span>
                                             {% endif %}
                                             <h6 class="task-title mb-0">{{ task.title }}</h6>
+                                            <span class="badge bg-info ms-2">Kunlik</span>
                                         </div>
                                         <p class="task-description text-muted mt-2">{{ task.description }}</p>
                                         <div class="task-meta">
-                                            <span class="badge bg-{% if task.difficulty == 'easy' %}success{% elif task.difficulty == 'medium' %}warning{% else %}danger{% endif %} me-2">
+                                            <span
+                                                class="badge bg-{% if task.difficulty == 'easy' %}success{% elif task.difficulty == 'medium' %}warning{% else %}danger{% endif %} me-2">
                                                 {{ task.difficulty }}
                                             </span>
                                             <span class="me-3">💰 {{ task.reward_coins }} coin</span>
@@ -279,34 +224,105 @@
                                         </button>
                                         {% else %}
                                         {% if task.quiz_required %}
-                                        <a href="{{ url_for('start_task_quiz', task_id=task.id) }}" class="btn btn-primary btn-eco-animated {% if user.energy < task.energy_cost %}disabled{% endif %}" {% if user.energy < task.energy_cost %}title="Energiya yetarli emas" {% endif %}>
-                                            Testni Boshlash
+                                        <a href="{{ url_for('daily_task_test', task_id=task.id) }}"
+                                            class="btn btn-primary btn-eco-animated {% if user.energy < task.energy_cost %}disabled{% endif %}"
+                                            {% if user.energy < task.energy_cost %}title="Energiya yetarli emas" {%
+                                            endif %}>
+                                            🧪 Testni Boshlash
                                         </a>
                                         {% else %}
-                                        <button class="btn btn-success btn-eco-animated complete-task" 
-                                                data-task-id="{{ task.id }}" 
-                                                data-task-title="{{ task.title }}"
-                                                data-energy-cost="{{ task.energy_cost }}"
-                                                data-reward-coins="{{ task.reward_coins }}"
-                                                {% if user.energy < task.energy_cost %}disabled{% endif %}>
+                                        <button class="btn btn-success btn-eco-animated complete-task"
+                                            data-task-id="{{ task.id }}" data-task-title="{{ task.title }}"
+                                            data-energy-cost="{{ task.energy_cost }}"
+                                            data-reward-coins="{{ task.reward_coins }}" {% if user.energy <
+                                            task.energy_cost %}disabled{% endif %}>
                                             Bajarish
                                         </button>
                                         {% endif %}
                                         {% endif %}
 
                                         {% if user.energy < task.energy_cost and task.id not in completed_task_ids %}
-                                        <small class="text-danger mt-2 d-block">
+                                            <small class="text-danger mt-2 d-block">
                                             <i class="fas fa-exclamation-triangle me-1"></i>
                                             Energiya yetarli emas
-                                        </small>
+                                            </small>
+                                            {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>Bugun kunlik topshiriqlar mavjud emas
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Doimiy topshiriqlar -->
+                    <div class="mb-4">
+                        <h6 class="text-success mb-3">
+                            <i class="fas fa-infinity me-2"></i>Doimiy Topshiriqlar
+                        </h6>
+                        {% for task in regular_tasks %}
+                        <div
+                            class="card task-card mb-3 eco-card {% if task.id in completed_task_ids %}completed-task{% endif %}">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <div class="d-flex align-items-center">
+                                            {% if task.id in completed_task_ids %}
+                                            <span class="badge bg-success me-2"><i class="fas fa-check"></i></span>
+                                            {% endif %}
+                                            <h6 class="task-title mb-0">{{ task.title }}</h6>
+                                        </div>
+                                        <p class="task-description text-muted mt-2">{{ task.description }}</p>
+                                        <div class="task-meta">
+                                            <span
+                                                class="badge bg-{% if task.difficulty == 'easy' %}success{% elif task.difficulty == 'medium' %}warning{% else %}danger{% endif %} me-2">
+                                                {{ task.difficulty }}
+                                            </span>
+                                            <span class="me-3">💰 {{ task.reward_coins }} coin</span>
+                                            <span>⚡ {{ task.energy_cost }} energiya</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        {% if task.id in completed_task_ids %}
+                                        <button class="btn btn-success btn-eco-animated" disabled>
+                                            <i class="fas fa-check me-2"></i>Bajarildi
+                                        </button>
+                                        {% else %}
+                                        {% if task.quiz_required %}
+                                        <a href="{{ url_for('start_task_quiz', task_id=task.id) }}"
+                                            class="btn btn-primary btn-eco-animated {% if user.energy < task.energy_cost %}disabled{% endif %}"
+                                            {% if user.energy < task.energy_cost %}title="Energiya yetarli emas" {%
+                                            endif %}>
+                                            Testni Boshlash
+                                        </a>
+                                        {% else %}
+                                        <button class="btn btn-success btn-eco-animated complete-task"
+                                            data-task-id="{{ task.id }}" data-task-title="{{ task.title }}"
+                                            data-energy-cost="{{ task.energy_cost }}"
+                                            data-reward-coins="{{ task.reward_coins }}" {% if user.energy <
+                                            task.energy_cost %}disabled{% endif %}>
+                                            Bajarish
+                                        </button>
+                                        {% endif %}
                                         {% endif %}
 
-                                        {% if task.quiz_required and task.id not in completed_task_ids %}
-                                        <small class="text-info mt-2 d-block">
-                                            <i class="fas fa-graduation-cap me-1"></i>
-                                            Test talab qilinadi
-                                        </small>
-                                        {% endif %}
+                                        {% if user.energy < task.energy_cost and task.id not in completed_task_ids %}
+                                            <small class="text-danger mt-2 d-block">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            Energiya yetarli emas
+                                            </small>
+                                            {% endif %}
+
+                                            {% if task.quiz_required and task.id not in completed_task_ids %}
+                                            <small class="text-info mt-2 d-block">
+                                                <i class="fas fa-graduation-cap me-1"></i>
+                                                Test talab qilinadi
+                                            </small>
+                                            {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -340,22 +356,24 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4 text-end">
-                                        <a href="{{ url_for('ml_quiz') }}" class="btn btn-eco-animated {% if user.energy < 20 %}disabled{% endif %}" {% if user.energy < 20 %}title="Energiya yetarli emas" {% endif %}>
+                                        <a href="{{ url_for('ml_quiz') }}"
+                                            class="btn btn-eco-animated {% if user.energy < 20 %}disabled{% endif %}" {%
+                                            if user.energy < 20 %}title="Energiya yetarli emas" {% endif %}>
                                             Testni Boshlash
                                         </a>
-                                        {% if user.energy < 20 %}
-                                        <small class="text-danger mt-2 d-block">
+                                        {% if user.energy < 20 %} <small class="text-danger mt-2 d-block">
                                             <i class="fas fa-exclamation-triangle me-1"></i>
                                             Energiya yetarli emas
-                                        </small>
-                                        {% endif %}
+                                            </small>
+                                            {% endif %}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {% for task in quiz_tasks %}
-                        <div class="card task-card mb-3 eco-card {% if task.id in completed_task_ids %}completed-task{% endif %}">
+                        <div
+                            class="card task-card mb-3 eco-card {% if task.id in completed_task_ids %}completed-task{% endif %}">
                             <div class="card-body">
                                 <div class="row align-items-center">
                                     <div class="col-md-8">
@@ -368,7 +386,8 @@
                                         </div>
                                         <p class="task-description text-muted mt-2">{{ task.description }}</p>
                                         <div class="task-meta">
-                                            <span class="badge bg-{% if task.difficulty == 'easy' %}success{% elif task.difficulty == 'medium' %}warning{% else %}danger{% endif %} me-2">
+                                            <span
+                                                class="badge bg-{% if task.difficulty == 'easy' %}success{% elif task.difficulty == 'medium' %}warning{% else %}danger{% endif %} me-2">
                                                 {{ task.difficulty }}
                                             </span>
                                             <span class="me-3">💰 {{ task.reward_coins }} coin</span>
@@ -381,17 +400,20 @@
                                             <i class="fas fa-check me-2"></i>Bajarildi
                                         </button>
                                         {% else %}
-                                        <a href="{{ url_for('start_task_quiz', task_id=task.id) }}" class="btn btn-primary btn-eco-animated {% if user.energy < task.energy_cost %}disabled{% endif %}" {% if user.energy < task.energy_cost %}title="Energiya yetarli emas" {% endif %}>
+                                        <a href="{{ url_for('start_task_quiz', task_id=task.id) }}"
+                                            class="btn btn-primary btn-eco-animated {% if user.energy < task.energy_cost %}disabled{% endif %}"
+                                            {% if user.energy < task.energy_cost %}title="Energiya yetarli emas" {%
+                                            endif %}>
                                             Testni Boshlash
                                         </a>
                                         {% endif %}
 
                                         {% if user.energy < task.energy_cost and task.id not in completed_task_ids %}
-                                        <small class="text-danger mt-2 d-block">
+                                            <small class="text-danger mt-2 d-block">
                                             <i class="fas fa-exclamation-triangle me-1"></i>
                                             Energiya yetarli emas
-                                        </small>
-                                        {% endif %}
+                                            </small>
+                                            {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -426,18 +448,15 @@
                                     </div>
                                     <h6 class="item-name">{{ item.name }}</h6>
                                     <p class="item-price text-warning fw-bold">💰 {{ item.price }} coin</p>
-                                    <button class="btn btn-sm btn-eco buy-item" 
-                                            data-item-id="{{ item.id }}" 
-                                            data-item-price="{{ item.price }}" 
-                                            data-item-name="{{ item.name }}" 
-                                            {% if user.coins < item.price %}disabled{% endif %}>
+                                    <button class="btn btn-sm btn-eco buy-item" data-item-id="{{ item.id }}"
+                                        data-item-price="{{ item.price }}" data-item-name="{{ item.name }}" {% if
+                                        user.coins < item.price %}disabled{% endif %}>
                                         Sotib olish
                                     </button>
-                                    {% if user.coins < item.price %}
-                                    <small class="text-danger d-block mt-1">
+                                    {% if user.coins < item.price %} <small class="text-danger d-block mt-1">
                                         Coin yetarli emas
-                                    </small>
-                                    {% endif %}
+                                        </small>
+                                        {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -461,12 +480,9 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="text-success">+{{ pack.energy_amount }} ⚡</span>
                             <span class="text-warning">💰 {{ pack.price }}</span>
-                            <button class="btn btn-sm btn-success buy-energy" 
-                                    data-pack-id="{{ pack.id }}"
-                                    data-energy="{{ pack.energy_amount }}" 
-                                    data-price="{{ pack.price }}"
-                                    data-pack-name="{{ pack.name }}"
-                                    {% if user.coins < pack.price %}disabled{% endif %}>
+                            <button class="btn btn-sm btn-success buy-energy" data-pack-id="{{ pack.id }}"
+                                data-energy="{{ pack.energy_amount }}" data-price="{{ pack.price }}"
+                                data-pack-name="{{ pack.name }}" {% if user.coins < pack.price %}disabled{% endif %}>
                                 Sotib olish
                             </button>
                         </div>
@@ -510,9 +526,17 @@
     }
 
     @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-        100% { transform: scale(1); }
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
     }
 
     .carousel-item {
@@ -552,9 +576,20 @@
     }
 
     @keyframes welcomeFloat {
-        0% { transform: scale(1.1); opacity: 0; }
-        50% { transform: scale(1); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
+        0% {
+            transform: scale(1.1);
+            opacity: 0;
+        }
+
+        50% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
     }
 
     .floating-element {
@@ -562,8 +597,15 @@
     }
 
     @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
     }
 
     .hero-avatar {
@@ -662,41 +704,41 @@
                     'Content-Type': 'application/json',
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
-                    // Statistikani yangilash
-                    updateUserStats({
-                        coins: data.new_coins,
-                        energy: data.new_energy
-                    });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        // Statistikani yangilash
+                        updateUserStats({
+                            coins: data.new_coins,
+                            energy: data.new_energy
+                        });
 
-                    // Tugmani o'zgartirish
-                    const buttons = document.querySelectorAll(`[data-task-id="${taskId}"]`);
-                    buttons.forEach(button => {
-                        button.disabled = true;
-                        button.textContent = '✅ Bajarildi';
-                        button.classList.remove('btn-primary', 'btn-success');
-                        button.classList.add('btn-success');
-                    });
+                        // Tugmani o'zgartirish
+                        const buttons = document.querySelectorAll(`[data-task-id="${taskId}"]`);
+                        buttons.forEach(button => {
+                            button.disabled = true;
+                            button.textContent = '✅ Bajarildi';
+                            button.classList.remove('btn-primary', 'btn-success');
+                            button.classList.add('btn-success');
+                        });
 
-                    // Kartani yangilash
-                    const taskCard = document.querySelector(`.task-card[data-task-id="${taskId}"]`);
-                    if (taskCard) {
-                        taskCard.classList.add('completed-task');
+                        // Kartani yangilash
+                        const taskCard = document.querySelector(`.task-card[data-task-id="${taskId}"]`);
+                        if (taskCard) {
+                            taskCard.classList.add('completed-task');
+                        }
+
+                        // Bajarilgan topshiriqlar sonini yangilash
+                        updateCompletedTasksCount();
+                    } else {
+                        alert('Xatolik: ' + data.error);
                     }
-
-                    // Bajarilgan topshiriqlar sonini yangilash
-                    updateCompletedTasksCount();
-                } else {
-                    alert('Xatolik: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Xatolik:', error);
-                alert('Server xatosi!');
-            });
+                })
+                .catch(error => {
+                    console.error('Xatolik:', error);
+                    alert('Server xatosi!');
+                });
         }
     }
 
@@ -713,26 +755,26 @@
                     price: itemPrice
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
-                    updateUserStats({ coins: data.new_coins });
-                    
-                    // Tugmani o'zgartirish
-                    const button = document.querySelector(`.buy-item[data-item-id="${itemId}"]`);
-                    if (button) {
-                        button.disabled = true;
-                        button.textContent = 'Sotib olindi';
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        updateUserStats({ coins: data.new_coins });
+
+                        // Tugmani o'zgartirish
+                        const button = document.querySelector(`.buy-item[data-item-id="${itemId}"]`);
+                        if (button) {
+                            button.disabled = true;
+                            button.textContent = 'Sotib olindi';
+                        }
+                    } else {
+                        alert('Xatolik: ' + data.error);
                     }
-                } else {
-                    alert('Xatolik: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Xatolik:', error);
-                alert('Server xatosi!');
-            });
+                })
+                .catch(error => {
+                    console.error('Xatolik:', error);
+                    alert('Server xatosi!');
+                });
         }
     }
 
@@ -750,29 +792,29 @@
                     energy_amount: energyAmount
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
-                    updateUserStats({ 
-                        coins: data.new_coins,
-                        energy: data.new_energy 
-                    });
-                    
-                    // Tugmani o'zgartirish
-                    const button = document.querySelector(`.buy-energy[data-pack-id="${packId}"]`);
-                    if (button) {
-                        button.disabled = true;
-                        button.textContent = 'Sotib olindi';
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        updateUserStats({
+                            coins: data.new_coins,
+                            energy: data.new_energy
+                        });
+
+                        // Tugmani o'zgartirish
+                        const button = document.querySelector(`.buy-energy[data-pack-id="${packId}"]`);
+                        if (button) {
+                            button.disabled = true;
+                            button.textContent = 'Sotib olindi';
+                        }
+                    } else {
+                        alert('Xatolik: ' + data.error);
                     }
-                } else {
-                    alert('Xatolik: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Xatolik:', error);
-                alert('Server xatosi!');
-            });
+                })
+                .catch(error => {
+                    console.error('Xatolik:', error);
+                    alert('Server xatosi!');
+                });
         }
     }
 
@@ -787,38 +829,38 @@
     }
 
     // DOM yuklanganida ishga tushirish
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Topshiriq bajarish tugmalari
         document.querySelectorAll('.complete-task').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 const taskId = this.dataset.taskId;
                 const taskTitle = this.dataset.taskTitle;
                 const energyCost = parseInt(this.dataset.energyCost);
                 const rewardCoins = parseInt(this.dataset.rewardCoins);
-                
+
                 completeTask(taskId, taskTitle, energyCost, rewardCoins);
             });
         });
 
         // Mahsulot sotib olish tugmalari
         document.querySelectorAll('.buy-item').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 const itemId = this.dataset.itemId;
                 const itemName = this.dataset.itemName;
                 const itemPrice = parseInt(this.dataset.itemPrice);
-                
+
                 buyItem(itemId, itemName, itemPrice);
             });
         });
 
         // Energiya paketi sotib olish tugmalari
         document.querySelectorAll('.buy-energy').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 const packId = this.dataset.packId;
                 const packName = this.dataset.packName;
                 const energyAmount = parseInt(this.dataset.energy);
                 const price = parseInt(this.dataset.price);
-                
+
                 buyEnergyPack(packId, packName, energyAmount, price);
             });
         });

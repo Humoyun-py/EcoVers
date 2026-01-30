@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦁 Hayvonlarni Himoya Qilish - EcoTrack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-title {
+            font-size: 32px;
+            color: #667eea;
+            text-align: center;
+            flex: 1;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-info {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .game-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+
+        .game-info p {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .game-area {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .animals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .animal-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 3px solid transparent;
+        }
+
+        .animal-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border-color: #4CAF50;
+        }
+
+        .animal-card.endangered {
+            border-color: #ff5722;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .animal-card.saved {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .animal-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+
+        .animal-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .animal-status {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .game-footer {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .energy-bar {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .energy-label {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .energy-progress {
+            width: 100%;
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .energy-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .finish-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .finish-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .finish-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Result Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            animation: slideDown 0.5s;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .modal-score {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .modal-reward {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 28px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .modal-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 20px;
+            }
+
+            .game-title {
+                font-size: 24px;
+            }
+
+            .animals-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .animal-icon {
+                font-size: 40px;
+            }
+
+            .animal-name {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <button class="back-btn" onclick="goBack()">⬅ Orqaga</button>
+            <h1 class="game-title">🦁 Hayvonlarni Himoya Qilish</h1>
+            <div class="score-display">⭐ Ball: <span id="score">0</span></div>
+        </div>
+
+        <div class="game-info">
+            <h3>O'yin Haqida</h3>
+            <p>Yo'qolib ketish xavfida turgan hayvonlarni toping va ularni himoya qiling! Har bir hayvonni bosib, ular
+                haqida ma'lumot oling va himoya qiling.</p>
+        </div>
+
+        <div class="game-area">
+            <h3 style="text-align: center; color: #333; margin-bottom: 20px;">Hayvonlarni Tanlang</h3>
+            <div class="animals-grid" id="animalsGrid"></div>
+        </div>
+
+        <div class="game-footer">
+            <div class="energy-bar">
+                <div class="energy-label">⚡ Energiya</div>
+                <div class="energy-progress">
+                    <div class="energy-fill" id="energyFill" style="width: {{ user.energy }}%">
+                        {{ user.energy }}%
+                    </div>
+                </div>
+            </div>
+            <button class="finish-btn" id="finishBtn" onclick="finishGame()">🏆 O'yinni Yakunlash</button>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">🎉</div>
+            <h2 class="modal-title">Tabriklaymiz!</h2>
+            <p class="modal-score">Siz <strong id="finalScore">0</strong> ball to'pladingiz!</p>
+            <p class="modal-score"><strong id="savedCount">0</strong> ta hayvonni himoyadingiz!</p>
+            <div class="modal-reward">
+                🪙 +<span id="coinsEarned">0</span> Coin!
+            </div>
+            <button class="modal-btn" onclick="returnToDashboard()">Dashboard'ga Qaytish</button>
+        </div>
+    </div>
+
+    <script>
+        const animals = [
+            { icon: '🐅', name: 'Bengaliya yo\'lbarsi', endangered: true },
+            { icon: '🦏', name: 'Qora karkidon', endangered: true },
+            { icon: '🐼', name: 'Panda', endangered: true },
+            { icon: '🦅', name: 'Burgut', endangered: false },
+            { icon: '🐘', name: 'Fil', endangered: true },
+            { icon: '🦒', name: 'Jirafa', endangered: false },
+            { icon: '🦁', name: 'Arslon', endangered: true },
+            { icon: '🐻‍❄️', name: 'Qutb ayig\'i', endangered: true },
+            { icon: '🦘', name: 'Kenguru', endangered: false },
+            { icon: '🦓', name: 'Zebra', endangered: false },
+            { icon: '🦍', name: 'Gorilla', endangered: true },
+            { icon: '🐆', name: 'Gepard', endangered: true }
+        ];
+
+        let score = 0;
+        let savedAnimals = 0;
+        let gameActive = true;
+
+        function initGame() {
+            const grid = document.getElementById('animalsGrid');
+            grid.innerHTML = '';
+
+            animals.forEach((animal, index) => {
+                const card = document.createElement('div');
+                card.className = 'animal-card' + (animal.endangered ? ' endangered' : '');
+                card.innerHTML = `
+                    <div class="animal-icon">${animal.icon}</div>
+                    <div class="animal-name">${animal.name}</div>
+                    <div class="animal-status">${animal.endangered ? '⚠️ Xavf ostida' : '✅ Xavfsiz'}</div>
+                `;
+                card.onclick = () => selectAnimal(index, card);
+                grid.appendChild(card);
+            });
+        }
+
+        function selectAnimal(index, card) {
+            if (!gameActive || card.classList.contains('saved')) return;
+
+            const animal = animals[index];
+
+            if (animal.endangered) {
+                // To'g'ri tanlov
+                score += 10;
+                savedAnimals++;
+                card.classList.add('saved');
+                card.innerHTML = `
+                    <div class="animal-icon">${animal.icon}</div>
+                    <div class="animal-name">${animal.name}</div>
+                    <div class="animal-status">✅ Himoyalandi!</div>
+                `;
+                playSound('success');
+            } else {
+                // Noto'g'ri tanlov
+                score = Math.max(0, score - 3);
+                playSound('error');
+            }
+
+            document.getElementById('score').textContent = score;
+
+            // Barcha xavfli hayvonlar himoyalanganni tekshirish
+            checkGameCompletion();
+        }
+
+        function checkGameCompletion() {
+            const endangeredCount = animals.filter(a => a.endangered).length;
+            if (savedAnimals >= endangeredCount) {
+                setTimeout(() => {
+                    finishGame();
+                }, 500);
+            }
+        }
+
+        function playSound(type) {
+            // Sound effect placeholder
+            console.log('Playing sound:', type);
+        }
+
+        async function finishGame() {
+            gameActive = false;
+
+            // Coin hisoblash
+            const coins = Math.floor(score / 2) + 10;
+
+            // Modalda natijani ko'rsatish
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('savedCount').textContent = savedAnimals;
+            document.getElementById('coinsEarned').textContent = coins;
+            document.getElementById('resultModal').style.display = 'block';
+
+            // Serverga natijani yuborish
+            try {
+                const response = await fetch('/game/complete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        game_type: 'hayvonlar_himoya',
+                        score: score,
+                        coins_earned: coins
+                    })
+                });
+
+                const data = await response.json();
+                if (!data.success) {
+                    console.error('Natijani saqlashda xatolik:', data.error);
+                }
+            } catch (error) {
+                console.error('Server xatosi:', error);
+            }
+        }
+
+        function returnToDashboard() {
+            window.location.href = '/dashboard';
+        }
+
+        function goBack() {
+            if (confirm('O\'yindan chiqmoqchimisiz? Progress saqlanmaydi!')) {
+                window.location.href = '/games';
+            }
+        }
+
+        // O'yinni boshlash
+        initGame();
+    </script>
+</body>
+
+</html>

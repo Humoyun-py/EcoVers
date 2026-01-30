@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌲 O'rmon Muhofizchisi - EcoTrack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2d5016 0%, #8bc34a 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .game-title {
+            font-size: 32px;
+            color: #2d5016;
+            flex: 1;
+            text-align: center;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .forest-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 30px 0;
+        }
+
+        .tree-cell {
+            aspect-ratio: 1;
+            background: #90EE90;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tree-cell.fire {
+            background: #ff5722;
+            animation: burn 0.5s ease-in-out;
+        }
+
+        .tree-cell.saved {
+            background: #4CAF50;
+            transform: scale(1.1);
+        }
+
+        @keyframes burn {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2d5016;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-reward {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 28px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .forest-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <button class="back-btn" onclick="goBack()">⬅ Orqaga</button>
+            <h1 class="game-title">🌲 O'rmon Muhofizchisi</h1>
+            <div class="score-display">⭐ <span id="score">0</span></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value">🌳 <span id="trees">20</span></div>
+                <div class="stat-label">Sog'lom Daraxtlar</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">🔥 <span id="fires">0</span></div>
+                <div class="stat-label">Yong'inlar</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">💧 <span id="water">5</span></div>
+                <div class="stat-label">Suv</div>
+            </div>
+        </div>
+
+        <div class="forest-grid" id="forestGrid"></div>
+
+        <button style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;" onclick="finishGame()">🏆 O'yinni Tugatish</button>
+    </div>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <div style="font-size: 80px;">🎉</div>
+            <h2 style="font-size: 32px; color: #2d5016; margin: 15px 0;">Ajoyib!</h2>
+            <p style="font-size: 24px; margin: 20px 0;">Saqlab qolilgan: <strong id="finalTrees">0</strong> ta daraxt
+            </p>
+            <div class="modal-reward">🪙 +<span id="coinsEarned">0</span> Coin!</div>
+            <button style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+                color: white;
+                border: none;
+                padding: 15px 40px;
+                border-radius: 25px;
+                font-size: 18px;
+                cursor: pointer;" onclick="window.location.href='/dashboard'">Dashboard'ga Qaytish</button>
+        </div>
+    </div>
+
+    <script>
+        const gridSize = 20;
+        let score = 0;
+        let trees = gridSize;
+        let fires = 0;
+        let water = 5;
+        let cells = [];
+
+        function initGame() {
+            const grid = document.getElementById('forestGrid');
+            for (let i = 0; i < gridSize; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'tree-cell';
+                cell.textContent = '🌲';
+                cell.onclick = () => extinguish(i);
+                grid.appendChild(cell);
+                cells.push(cell);
+            }
+
+            // Har 2 sekundda yangiyong'in chiqarish
+            setInterval(() => {
+                if (trees > 0 && fires < 5) {
+                    const randomIndex = Math.floor(Math.random() * gridSize);
+                    if (cells[randomIndex].textContent === '🌲') {
+                        cells[randomIndex].textContent = '🔥';
+                        cells[randomIndex].classList.add('fire');
+                        fires++;
+                        trees--;
+                        updateStats();
+                    }
+                }
+            }, 2000);
+        }
+
+        function extinguish(index) {
+            if (cells[index].textContent === '🔥' && water > 0) {
+                cells[index].textContent = '💚';
+                cells[index].classList.remove('fire');
+                cells[index].classList.add('saved');
+                fires--;
+                trees++;
+                water--;
+                score += 15;
+                updateStats();
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('trees').textContent = trees;
+            document.getElementById('fires').textContent = fires;
+            document.getElementById('water').textContent = water;
+        }
+
+        async function finishGame() {
+            const coins = score + 20;
+            document.getElementById('finalTrees').textContent = trees;
+            document.getElementById('coinsEarned').textContent = coins;
+            document.getElementById('resultModal').style.display = 'block';
+
+            try {
+                await fetch('/game/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        game_type: 'ormon_muhofizchisi',
+                        score: score,
+                        coins_earned: coins
+                    })
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function goBack() {
+            if (confirm('O\'yindan chiqmoqchimisiz?')) {
+                window.location.href = '/games';
+            }
+        }
+
+        initGame();
+    </script>
+</body>
+
+</html>

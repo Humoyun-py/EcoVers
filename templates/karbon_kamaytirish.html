@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👣 Karbon Kamaytirish - EcoTrack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #607d8b 0%, #90a4ae 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        .game-title {
+            font-size: 32px;
+            color: #607d8b;
+            flex: 1;
+            text-align: center;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .choices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .choice-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid #e0e0e0;
+        }
+
+        .choice-card:hover {
+            transform: translateY(-5px);
+            border-color: #4caf50;
+        }
+
+        .choice-card.selected {
+            background: #4caf50;
+            color: white;
+            border-color: #2e7d32;
+        }
+
+        .choice-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .finish-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-reward {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 28px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <button class="back-btn" onclick="goBack()">⬅ Orqaga</button>
+            <h1 class="game-title">👣 Karbon Kamaytirish</h1>
+            <div class="score-display">📉 <span id="carbon">100</span> kg CO₂</div>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; min-height: 400px;">
+            <h3 style="text-align: center; margin-bottom: 20px;">Hayotingizda Qanday O'zgarishlar Qilasiz?</h3>
+            <div class="choices-grid" id="choicesGrid"></div>
+        </div>
+
+        <button class="finish-btn" onclick="finishGame()">🏆 Natijani Ko'rish</button>
+    </div>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <div style="font-size: 80px;">🎉</div>
+            <h2 style="font-size: 32px; color: #607d8b; margin: 15px 0;">Ajoyib!</h2>
+            <p style="font-size: 24px; margin: 20px 0;">Kamaytirgan CO₂: <strong id="reducedCarbon">0</strong> kg</p>
+            <div class="modal-reward">🪙 +<span id="coinsEarned">0</span> Coin!</div>
+            <button
+                style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%); color: white; border: none; padding: 15px 40px; border-radius: 25px; font-size: 18px; cursor: pointer;"
+                onclick="window.location.href='/dashboard'">Dashboard'ga Qaytish</button>
+        </div>
+    </div>
+
+    <script>
+        const choices = [
+            { icon: '🚴', name: 'Velosiped haydash', reduction: 15 },
+            { icon: '♻️', name: 'Qayta ishlash', reduction: 12 },
+            { icon: '💡', name: 'LED lampalar', reduction: 8 },
+            { icon: '🌱', name: 'Vegetarian ovqat', reduction: 20 },
+            { icon: '🚿', name: 'Qisqa dush', reduction: 5 },
+            { icon: '🧺', name: 'Qayta ishlatilgan sumka', reduction: 6 },
+            { icon: '🏠', name: 'Uy izolyatsiyasi', reduction: 18 },
+            { icon: '📱', name: 'Elektronika energiyasini o\'chirish', reduction: 7 },
+            { icon: '🌳', name: 'Daraxt ekish', reduction: 25 },
+            { icon: '💧', name: 'Suv tejash', reduction: 10 }
+        ];
+
+        let carbon = 100;
+        let score = 0;
+
+        function initGame() {
+            const grid = document.getElementById('choicesGrid');
+            choices.forEach((choice, index) => {
+                const card = document.createElement('div');
+                card.className = 'choice-card';
+                card.innerHTML = `
+                    <div class="choice-icon">${choice.icon}</div>
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">${choice.name}</div>
+                    <div style="font-size: 14px; color: #666;">-${choice.reduction} kg CO₂</div>
+                `;
+                card.onclick = () => selectChoice(index, card, choice);
+                grid.appendChild(card);
+            });
+        }
+
+        function selectChoice(index, card, choice) {
+            if (card.classList.contains('selected')) return;
+
+            carbon = Math.max(0, carbon - choice.reduction);
+            score += choice.reduction * 2;
+            card.classList.add('selected');
+
+            document.getElementById('carbon').textContent = carbon;
+        }
+
+        async function finishGame() {
+            const reduced = 100 - carbon;
+            const coins = score + 15;
+            document.getElementById('reducedCarbon').textContent = reduced;
+            document.getElementById('coinsEarned').textContent = coins;
+            document.getElementById('resultModal').style.display = 'block';
+
+            try {
+                await fetch('/game/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        game_type: 'karbon_kamaytirish',
+                        score: score,
+                        coins_earned: coins
+                    })
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function goBack() {
+            if (confirm('O\'yindan chiqmoqchimisiz?')) window.location.href = '/games';
+        }
+
+        initGame();
+    </script>
+</body>
+
+</html>

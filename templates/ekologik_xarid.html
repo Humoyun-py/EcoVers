@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛒 Ekologik Xarid - EcoTrack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #26c6da 0%, #00acc1 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        .game-title {
+            font-size: 32px;
+            color: #00acc1;
+            flex: 1;
+            text-align: center;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .product-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid #e0e0e0;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+
+        .product-card.eco {
+            border-color: #4caf50;
+        }
+
+        .product-card.selected {
+            background: #4caf50;
+            color: white;
+        }
+
+        .cart {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            min-height: 100px;
+        }
+
+        .finish-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-reward {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 28px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <button class="back-btn" onclick="goBack()">⬅ Orqaga</button>
+            <h1 class="game-title">🛒 Ekologik Xarid</h1>
+            <div class="score-display">🌱 <span id="score">0</span> ball</div>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 30px; border-radius: 15px;">
+            <h3 style="text-align: center; margin-bottom: 20px;">Ekologik Mahsulotlarni Tanlang</h3>
+            <div class="products-grid" id="productsGrid"></div>
+
+            <div class="cart">
+                <h4 style="margin-bottom: 10px;">🛍️ Savatingiz</h4>
+                <p id="cartItems">0 ta mahsulot</p>
+            </div>
+        </div>
+
+        <button class="finish-btn" onclick="finishGame()">🏆 Xaridni Yakunlash</button>
+    </div>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <div style="font-size: 80px;">🎉</div>
+            <h2 style="font-size: 32px; color: #00acc1; margin: 15px 0;">Ekologik Xarid!</h2>
+            <p style="font-size: 24px; margin: 20px 0;">Ball: <strong id="finalScore">0</strong></p>
+            <div class="modal-reward">🪙 +<span id="coinsEarned">0</span> Coin!</div>
+            <button
+                style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%); color: white; border: none; padding: 15px 40px; border-radius: 25px; font-size: 18px; cursor: pointer;"
+                onclick="window.location.href='/dashboard'">Dashboard'ga Qaytish</button>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { icon: '🥬', name: 'Organik sabzavot', eco: true, points: 10 },
+            { icon: '🛍️', name: 'Qayta ishlangan sumka', eco: true, points: 8 },
+            { icon: '🧴', name: 'Tabiiy shampun', eco: true, points: 7 },
+            { icon: '🧻', name: 'Qayta ishlangan qog\'oz', eco: true, points: 6 },
+            { icon: '🍎', name: 'Mahalliy meva', eco: true, points: 9 },
+            { icon: '🥤', name: 'Plastik stakan', eco: false, points: -5 },
+            { icon: '🥫', name: 'Konserva', eco: false, points: -3 },
+            { icon: '🍔', name: 'Fast food', eco: false, points: -6 },
+            { icon: '🌿', name: 'Organik choy', eco: true, points: 8 },
+            { icon: '🧪', name: 'Kimyoviy vosita', eco: false, points: -4 }
+        ];
+
+        let score = 0;
+        let cartCount = 0;
+
+        function initGame() {
+            const grid = document.getElementById('productsGrid');
+            products.forEach((product, index) => {
+                const card = document.createElement('div');
+                card.className = 'product-card' + (product.eco ? ' eco' : '');
+                card.innerHTML = `
+                    <div style="font-size: 40px; margin-bottom: 10px;">${product.icon}</div>
+                    <div style="font-size: 14px; font-weight: bold;">${product.name}</div>
+                    <div style="font-size: 12px; color: ${product.eco ? '#4caf50' : '#f44336'}; margin-top: 5px;">
+                        ${product.eco ? '✅ Ekologik' : '❌ Zararli'}
+                    </div>
+                `;
+                card.onclick = () => selectProduct(card, product);
+                grid.appendChild(card);
+            });
+        }
+
+        function selectProduct(card, product) {
+            if (card.classList.contains('selected')) return;
+
+            card.classList.add('selected');
+            score += product.points;
+            cartCount++;
+
+            document.getElementById('score').textContent = Math.max(0, score);
+            document.getElementById('cartItems').textContent = `${cartCount} ta mahsulot`;
+        }
+
+        async function finishGame() {
+            const coins = Math.max(10, score + 15);
+            document.getElementById('finalScore').textContent = Math.max(0, score);
+            document.getElementById('coinsEarned').textContent = coins;
+            document.getElementById('resultModal').style.display = 'block';
+
+            try {
+                await fetch('/game/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        game_type: 'ekologik_xarid',
+                        score: Math.max(0, score),
+                        coins_earned: coins
+                    })
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function goBack() {
+            if (confirm('O\'yindan chiqmoqchimisiz?')) window.location.href = '/games';
+        }
+
+        initGame();
+    </script>
+</body>
+
+</html>
